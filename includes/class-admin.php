@@ -149,7 +149,7 @@ class Admin {
 				<?php else : ?>
 					<p class="ymove-status"><span class="dashicons dashicons-marker"></span> <?php esc_html_e( 'Not connected. The calculators work without a key; the tracker, barcode scanner and Nutrition Facts block need one.', 'ymove-nutrition' ); ?></p>
 					<p><a class="button button-primary" target="_blank" rel="noopener" href="<?php echo esc_url( ymove_url( 'nutrition-api/signup', array( 'source' => 'wordpress-plugin' ) ) ); ?>"><?php esc_html_e( 'Get a Your Move API key', 'ymove-nutrition' ); ?></a>
-					<span class="description"><?php esc_html_e( 'Basic covers food search and barcodes. Pro adds AI photo, text and voice logging.', 'ymove-nutrition' ); ?></span></p>
+					<span class="description"><?php esc_html_e( 'Basic covers food search and barcodes. Pro adds AI photo and text logging.', 'ymove-nutrition' ); ?></span></p>
 				<?php endif; ?>
 				<?php if ( ! Settings::has_constant_key() ) : ?>
 				<table class="form-table" role="presentation">
