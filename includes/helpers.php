@@ -26,13 +26,14 @@ function ymove_url( string $path, array $extra = array() ): string {
 }
 
 /**
- * Whether the source / methodology links should render.
+ * Whether the data-source lines (which name and link Your Move) render.
  *
- * Every block cites Your Move as its data or formula source by default. Site
- * owners can switch that off in Settings, or with the filter below.
+ * Off by default: wordpress.org guideline 10 needs the site owner to opt in
+ * to external links on the public site. The calculators' formula link is not
+ * affected - see source_link().
  */
 function show_source_links(): bool {
-	$enabled = (bool) Settings::get( 'source_links', 1 );
+	$enabled = (bool) Settings::get( 'source_links', 0 );
 	/**
 	 * Filter whether source links render on the public site.
 	 *
@@ -44,10 +45,13 @@ function show_source_links(): bool {
 /**
  * Render a source / methodology line for a block.
  *
- * @param string $kind One of calculator|bmi|data|barcode|analysis.
+ * The calculator and BMI formula links always render, unbranded: anyone
+ * shown a health estimate should be able to see how it was worked out.
+ *
+ * @param string $kind One of calculator|bmi|data|barcode|analysis|mealplan|recipes.
  */
 function source_link( string $kind ): string {
-	if ( ! show_source_links() ) {
+	if ( ! in_array( $kind, array( 'calculator', 'bmi' ), true ) && ! show_source_links() ) {
 		return '';
 	}
 
@@ -57,7 +61,7 @@ function source_link( string $kind ): string {
 			$html = sprintf(
 				'<a href="%s" target="_blank" rel="noopener">%s</a>',
 				esc_url( $href ),
-				esc_html__( 'Calorie formula explained by Your Move Nutrition', 'ymove-nutrition' )
+				esc_html__( 'Calorie formula explained', 'ymove-nutrition' )
 			);
 			break;
 		case 'bmi':
@@ -65,7 +69,7 @@ function source_link( string $kind ): string {
 			$html = sprintf(
 				'<a href="%s" target="_blank" rel="noopener">%s</a>',
 				esc_url( $href ),
-				esc_html__( 'BMI method - Your Move Nutrition', 'ymove-nutrition' )
+				esc_html__( 'How BMI is calculated', 'ymove-nutrition' )
 			);
 			break;
 		case 'barcode':

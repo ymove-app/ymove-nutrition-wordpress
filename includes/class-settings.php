@@ -69,7 +69,7 @@ class Settings {
 			'theme_fonts'          => 1, // Bundled locally, so on by default.
 			'gradient_palette'     => 'glacier',
 			'accent_color'         => '',
-			'source_links'       => 1,
+			'source_links'       => 0, // Opt-in: wordpress.org guideline 10.
 			'credit_link'          => 0,
 			'tracker_access'       => 'logged_in', // logged_in | roles
 			'tracker_roles'        => array(),

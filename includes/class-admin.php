@@ -297,7 +297,7 @@ class Admin {
 			<h2><?php esc_html_e( 'Links and credit', 'ymove-nutrition' ); ?></h2>
 			<table class="form-table" role="presentation">
 				<tr><th scope="row"><?php esc_html_e( 'Source links', 'ymove-nutrition' ); ?></th>
-					<td><label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[source_links]" value="1" <?php checked( $s['source_links'] ); ?>> <?php esc_html_e( 'Show where the numbers come from under each block (formula explanation, USDA / Open Food Facts data source).', 'ymove-nutrition' ); ?></label></td></tr>
+					<td><label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[source_links]" value="1" <?php checked( $s['source_links'] ); ?>> <?php esc_html_e( 'Show the data source under the tracker, barcode, Nutrition Facts, meal plan and recipe blocks, with a link to Your Move. The calculators always link to their formula explanation.', 'ymove-nutrition' ); ?></label></td></tr>
 				<tr><th scope="row"><?php esc_html_e( 'Support Your Move', 'ymove-nutrition' ); ?></th>
 					<td><label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[credit_link]" value="1" <?php checked( $s['credit_link'] ); ?>> <?php esc_html_e( 'Show a small "Nutrition API by Your Move" credit under the blocks and in results emails. Optional - it helps keep the free calculator free.', 'ymove-nutrition' ); ?></label></td></tr>
 			</table>

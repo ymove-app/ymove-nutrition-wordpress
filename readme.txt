@@ -72,7 +72,7 @@ Every request carries your API key and a User-Agent with the plugin version, Wor
 Your Move terms of service: https://ymove.app/terms-of-service
 Your Move privacy policy: https://ymove.app/privacy
 
-The optional source links under each block ("Calorie formula explained by Your Move Nutrition", "Data via Your Move Nutrition API", "Recipes and nutrition by Your Move Recipe API") point to ymove.app and can be switched off in Settings > Your Move Nutrition. No other external requests are made. No tracking scripts are loaded.
+The calorie and BMI calculators always show a "Calorie formula explained" / "How BMI is calculated" link to a page on ymove.app describing the formulas, so visitors can see how a health estimate was worked out. The data-source lines under the other blocks ("Data via Your Move Nutrition API", "Recipes and nutrition by Your Move Recipe API") and the "Nutrition API by Your Move" credit are off by default; you can switch them on in Settings > Your Move Nutrition. No other external requests are made. No tracking scripts are loaded.
 
 == Installation ==
 
