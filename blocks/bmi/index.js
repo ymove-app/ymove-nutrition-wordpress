@@ -51,7 +51,7 @@
 						el( SelectControl, {
 							label: __( 'Template', 'ymove-nutrition' ),
 							value: attributes.layout,
-							options: [ { label: 'Card', value: 'card' }, { label: 'Plain', value: 'plain' }, { label: 'Split', value: 'split' } ],
+							options: [ { label: __( 'Card', 'ymove-nutrition' ), value: 'card' }, { label: __( 'Plain', 'ymove-nutrition' ), value: 'plain' }, { label: __( 'Split', 'ymove-nutrition' ), value: 'split' } ],
 							onChange: ( layout ) => setAttributes( { layout } ),
 						} ),
 						el( SelectControl, {
@@ -70,7 +70,7 @@
 						isClassic( attributes.theme ) && el( SelectControl, {
 							label: __( 'Colour scheme', 'ymove-nutrition' ),
 							value: attributes.scheme,
-							options: [ { label: 'Light', value: 'default' }, { label: 'Dark', value: 'dark' }, { label: 'Soft', value: 'soft' }, { label: 'Bold', value: 'bold' } ],
+							options: [ { label: __( 'Light', 'ymove-nutrition' ), value: 'default' }, { label: __( 'Dark', 'ymove-nutrition' ), value: 'dark' }, { label: __( 'Soft', 'ymove-nutrition' ), value: 'soft' }, { label: __( 'Bold', 'ymove-nutrition' ), value: 'bold' } ],
 							onChange: ( scheme ) => setAttributes( { scheme } ),
 						} )
 					),

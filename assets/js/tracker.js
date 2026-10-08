@@ -17,7 +17,6 @@
 			if ( v === null || v === undefined || v === false ) continue;
 			if ( k === 'class' ) el.className = v;
 			else if ( k.startsWith( 'on' ) ) el.addEventListener( k.slice( 2 ).toLowerCase(), v );
-			else if ( k === 'html' ) el.innerHTML = v;
 			else if ( v === true ) el.setAttribute( k, '' );
 			else el.setAttribute( k, v );
 		}
@@ -28,14 +27,13 @@
 		return el;
 	}
 	const fmt = ( n, d = 0 ) => Number( n || 0 ).toLocaleString( undefined, { maximumFractionDigits: d } );
-	const todayISO = () => {
-		const d = new Date();
+	const todayISO = ( d = new Date() ) => {
 		return `${ d.getFullYear() }-${ String( d.getMonth() + 1 ).padStart( 2, '0' ) }-${ String( d.getDate() ).padStart( 2, '0' ) }`;
 	};
 	const shiftDay = ( iso, n ) => {
 		const d = new Date( iso + 'T12:00:00' );
 		d.setDate( d.getDate() + n );
-		return d.toISOString().slice( 0, 10 );
+		return todayISO( d );
 	};
 	const dayLabel = ( iso ) => {
 		if ( iso === todayISO() ) return t.today || 'Today';
@@ -78,12 +76,27 @@
 
 		/* --------------------------------------------------- data loading */
 		async function loadDay() {
-			state.day = await api( 'diary?date=' + state.date );
-			render();
+			try {
+				state.day = await api( 'diary?date=' + state.date );
+				render();
+			} catch ( e ) {
+				showProblem( e );
+			}
 		}
 		async function loadWeek() {
-			state.week = await api( 'diary/week?to=' + state.date );
-			render();
+			try {
+				state.week = await api( 'diary/week?to=' + state.date );
+				render();
+			} catch ( e ) {
+				showProblem( e );
+			}
+		}
+		function showProblem( e ) {
+			mount.replaceChildren( h( 'p', { class: 'ymn-notice' }, friendly( e ), ' ', h( 'button', { class: 'ymn-link', type: 'button', onClick: () => { render(); state.view === 'week' ? loadWeek() : loadDay(); } }, 'Retry' ) ) );
+		}
+		function stopAdding() {
+			state.adding?.scanner?.stop();
+			state.adding = null;
 		}
 		async function loadRecent() {
 			if ( state.recent ) return state.recent;
@@ -133,13 +146,13 @@
 			state.date = n === 0 ? todayISO() : shiftDay( state.date, n );
 			state.day = null;
 			state.week = null;
-			state.adding = null;
+			stopAdding();
 			render();
 			state.view === 'week' ? loadWeek() : loadDay();
 		}
 		function setView( v ) {
 			state.view = v;
-			state.adding = null;
+			stopAdding();
 			render();
 			if ( v === 'week' && ! state.week ) loadWeek();
 		}
@@ -240,8 +253,12 @@
 						ev.preventDefault();
 						const f = ev.target.elements;
 						const body = { kcal: +f.kcal.value, protein: +f.protein.value, carbs: +f.carbs.value, fat: +f.fat.value };
-						state.day.targets = ( await api( 'targets', { method: 'PUT', body } ) ).data;
-						render();
+						try {
+							state.day.targets = ( await api( 'targets', { method: 'PUT', body } ) ).data;
+							render();
+						} catch ( err ) {
+							ev.target.querySelector( '.ymn-note' ).textContent = friendly( err );
+						}
 					},
 				},
 				h( 'div', { class: 'ymn-grid' }, input( 'kcal', tg.kcal ), input( 'protein', tg.protein ), input( 'carbs', tg.carbs ), input( 'fat', tg.fat ) ),
@@ -387,6 +404,8 @@
 				loadRecent().then( ( foods ) => {
 					status.textContent = foods.length ? '' : 'Foods you log will show up here for quick re-adding.';
 					showFoods( foods, 'recent' );
+				} ).catch( ( e ) => {
+					status.textContent = friendly( e );
 				} );
 			} else if ( a.tab === 'scan' ) {
 				const cam = h( 'div', { class: 'ymn-cam' } );
@@ -496,6 +515,7 @@
 						h( 'button', { class: 'ymn-btn ymn-btn-primary', type: 'button', onClick: async ( ev ) => {
 							ev.target.disabled = true;
 							const chosen = items.filter( ( it ) => it.checked && it.nutrition );
+							try {
 							for ( const it of chosen ) {
 								await addEntry( {
 									foodId: it.matchedFood?.id || '',
@@ -508,6 +528,11 @@
 									carbs: it.nutrition.carbs,
 									fat: it.nutrition.fat,
 								}, source, a.meal, false );
+							}
+							} catch ( e ) {
+								ev.target.disabled = false;
+								ev.target.textContent = friendly( e );
+								return;
 							}
 							closeAdd();
 							loadDay();
@@ -633,7 +658,13 @@
 		}
 
 		async function exportCsv() {
-			const rows = ( await api( 'diary/all' ) ).data || [];
+			let rows;
+			try {
+				rows = ( await api( 'diary/all' ) ).data || [];
+			} catch ( e ) {
+				window.alert( friendly( e ) );
+				return;
+			}
 			const head = [ 'date', 'meal', 'food', 'brand', 'quantity', 'serving_g', 'kcal', 'protein_g', 'carbs_g', 'fat_g', 'fiber_g', 'sugar_g', 'sodium_mg', 'source' ];
 			const esc = ( v ) => `"${ String( v ?? '' ).replace( /"/g, '""' ) }"`;
 			const csv = [ head.join( ',' ) ]

@@ -11,7 +11,7 @@
 			if ( ! r.ok ) throw new Error( b.message || r.statusText );
 			return b;
 		} );
-	const esc = ( s ) => String( s ?? '' ).replace( /[&<>"]/g, ( c ) => ( { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ c ] ) );
+	const esc = ( s ) => String( s ?? '' ).replace( /[&<>"']/g, ( c ) => ( { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ c ] ) );
 	const fmt = ( n ) => Number( n || 0 ).toLocaleString();
 
 	const PLAN_LABEL = { demo: 'Demo', trial: 'Trial', basic: 'Basic', pro: 'Pro', scale: 'Scale', enterprise: 'Enterprise' };
@@ -54,7 +54,7 @@
 			d.setUTCDate( d.getUTCDate() - i );
 			days.push( d.toISOString().slice( 0, 10 ) );
 		}
-		const types = [ 'search', 'barcode', 'food', 'photo', 'text' ];
+		const types = [ 'search', 'barcode', 'food', 'photo', 'text', 'mealplan', 'recipe' ];
 		const max = Math.max( 1, ...days.map( ( day ) => types.reduce( ( s, t ) => s + ( local[ day ]?.[ t ] || 0 ), 0 ) ) );
 		chart.innerHTML = days
 			.map( ( day ) => {

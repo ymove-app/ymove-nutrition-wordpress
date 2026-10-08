@@ -108,10 +108,6 @@ class Settings {
 		return array_key_exists( $key, $all ) ? $all[ $key ] : $fallback;
 	}
 
-	public static function update( array $values ): void {
-		$current = self::all();
-		update_option( self::OPTION, array_merge( $current, $values ), false );
-	}
 
 	/**
 	 * Sanitize the settings array coming from the admin form.

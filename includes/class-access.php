@@ -53,7 +53,7 @@ class Access {
 	/**
 	 * Consume one unit of a throttle bucket. Returns false when exhausted.
 	 *
-	 * @param string $bucket search|barcode|photo|text
+	 * @param string $bucket search|barcode|photo|text|mealplan
 	 */
 	public static function consume( string $bucket, ?int $user_id = null ): bool {
 		$user_id = $user_id ?? get_current_user_id();
@@ -81,9 +81,12 @@ class Access {
 	}
 
 	/**
-	 * Public-route throttle keyed by IP (calculator lead capture).
+	 * Throttle keyed by IP for routes visitors can reach (leads, meal plans, recipes). 0 = unlimited.
 	 */
 	public static function consume_ip( string $bucket, int $limit, int $window ): bool {
+		if ( $limit <= 0 ) {
+			return true;
+		}
 		$key   = 'ymn_ip_' . $bucket . '_' . md5( client_ip() ) . '_' . floor( time() / $window );
 		$count = (int) get_transient( $key );
 		if ( $count >= $limit ) {

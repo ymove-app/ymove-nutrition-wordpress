@@ -1,8 +1,7 @@
 <?php
 /**
  * Outgoing mail through the site's own wp_mail. Messages are structured
- * (heading, intro, rows, button) so another transport can be added later;
- * Api_Client::send_mail() already talks to the Your Move relay.
+ * (heading, intro, rows, button) so another transport can be added later.
  *
  * @package YMove_Nutrition
  */

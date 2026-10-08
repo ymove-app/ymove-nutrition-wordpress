@@ -19,7 +19,7 @@
 			[ 'Total Sugars', f.sugar, 'g', 0 ],
 			[ 'Protein', f.protein, 'g', 1 ],
 		].filter( ( r ) => r[ 1 ] !== null && r[ 1 ] !== undefined );
-		const esc = ( s ) => String( s ?? '' ).replace( /[&<>"]/g, ( c ) => ( { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ c ] ) );
+		const esc = ( s ) => String( s ?? '' ).replace( /[&<>"']/g, ( c ) => ( { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ c ] ) );
 		return `<div class="ymn-label">
 			${ f.imageUrl ? `<img class="ymn-label-img" src="${ esc( f.imageUrl ) }" alt="">` : '' }
 			<div class="ymn-label-title">Nutrition Facts</div>

@@ -1,7 +1,6 @@
 /**
  * Camera barcode scanner. Uses the native BarcodeDetector API where the
- * browser has it (Chrome/Edge on Android and desktop, Safari 17+), and
- * lazily loads the bundled ZXing build everywhere else. Always pair it
+ * browser ships it, and lazily loads the bundled ZXing build everywhere else. Always pair it
  * with a manual-entry field: cameras need HTTPS and permission.
  *
  * window.ymoveScanner.open(container, { onResult(code), onError(msg) }) -> { stop() }

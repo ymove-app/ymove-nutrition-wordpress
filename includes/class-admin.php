@@ -147,7 +147,7 @@ class Admin {
 						<?php if ( Settings::has_constant_key() ) : ?><em><?php esc_html_e( '(set via YMOVE_API_KEY in wp-config.php)', 'ymove-nutrition' ); ?></em><?php endif; ?></p>
 					<div id="ymove-usage-summary" class="ymove-usage-summary"><?php esc_html_e( 'Checking plan...', 'ymove-nutrition' ); ?></div>
 				<?php else : ?>
-					<p class="ymove-status"><span class="dashicons dashicons-marker"></span> <?php esc_html_e( 'Not connected. The calculators work without a key; the tracker, barcode scanner and Nutrition Facts block need one.', 'ymove-nutrition' ); ?></p>
+					<p class="ymove-status"><span class="dashicons dashicons-marker"></span> <?php esc_html_e( 'Not connected. The calculators work without a key; the tracker, barcode scanner, Nutrition Facts, meal plan and Recipes blocks need one.', 'ymove-nutrition' ); ?></p>
 					<p><a class="button button-primary" target="_blank" rel="noopener" href="<?php echo esc_url( ymove_url( 'nutrition-api/signup', array( 'source' => 'wordpress-plugin' ) ) ); ?>"><?php esc_html_e( 'Get a Your Move API key', 'ymove-nutrition' ); ?></a>
 					<span class="description"><?php esc_html_e( 'Basic covers food search and barcodes. Pro adds AI photo and text logging.', 'ymove-nutrition' ); ?></span></p>
 				<?php endif; ?>
@@ -156,7 +156,7 @@ class Admin {
 					<tr><th scope="row"><label for="ymove-api-key"><?php esc_html_e( 'API key', 'ymove-nutrition' ); ?></label></th>
 						<td><input type="password" id="ymove-api-key" name="<?php echo esc_attr( $name ); ?>[api_key]" class="regular-text" autocomplete="off" placeholder="<?php echo $connected ? esc_attr__( 'Leave empty to keep the current key', 'ymove-nutrition' ) : 'ym_...'; ?>">
 						<?php if ( $connected ) : ?><label class="ymove-inline"><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[clear_api_key]" value="1"> <?php esc_html_e( 'Disconnect', 'ymove-nutrition' ); ?></label><?php endif; ?>
-						<p class="description"><?php esc_html_e( 'Stored encrypted in this site\'s database and only ever used server-side.', 'ymove-nutrition' ); ?></p></td></tr>
+						<p class="description"><?php esc_html_e( 'Stored in this site\'s database, encrypted with your site\'s salts, and only ever used server-side.', 'ymove-nutrition' ); ?></p></td></tr>
 				</table>
 				<?php endif; ?>
 			</div>
@@ -216,7 +216,7 @@ class Admin {
 					<p class="description"><?php esc_html_e( 'Buttons and highlights in the Classic and iOS styles, and the lime in Neo-brutalist. Leave empty for each style\'s own colour. A block can override it in its sidebar. Text on the colour switches between dark and white automatically.', 'ymove-nutrition' ); ?></p></td></tr>
 			</table>
 			<p><label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[theme_fonts]" value="1" <?php checked( $s['theme_fonts'] ); ?>> <?php esc_html_e( 'Use the Gradient and Neo-brutalist web fonts (DM Sans, Space Grotesk, Archivo Black). They ship with the plugin; nothing loads from Google.', 'ymove-nutrition' ); ?></label>
-			<br><span class="description"><?php esc_html_e( 'Off by default: loading them sends visitor IP addresses to Google. Without them the styles fall back to system fonts.', 'ymove-nutrition' ); ?></span></p>
+			<br><span class="description"><?php esc_html_e( 'Without them, the Gradient and Neo-brutalist styles use your theme\'s fonts.', 'ymove-nutrition' ); ?></span></p>
 
 			<h2><?php esc_html_e( 'Calculator: activity levels and goals', 'ymove-nutrition' ); ?></h2>
 			<p class="description"><?php esc_html_e( 'These apply to every calculator on the site. TDEE = BMR x activity multiplier; a goal adds or removes kcal per day. Leave a label empty to drop that activity level.', 'ymove-nutrition' ); ?></p>
@@ -260,7 +260,7 @@ class Admin {
 						<label><?php esc_html_e( 'Photos / day', 'ymove-nutrition' ); ?> <input type="number" min="0" name="<?php echo esc_attr( $name ); ?>[limit_photo_day]" value="<?php echo esc_attr( $s['limit_photo_day'] ); ?>" class="small-text"></label>
 						<label><?php esc_html_e( 'Text logs / day', 'ymove-nutrition' ); ?> <input type="number" min="0" name="<?php echo esc_attr( $name ); ?>[limit_text_day]" value="<?php echo esc_attr( $s['limit_text_day'] ); ?>" class="small-text"></label>
 						<label><?php esc_html_e( 'Meal plans / day', 'ymove-nutrition' ); ?> <input type="number" min="0" name="<?php echo esc_attr( $name ); ?>[limit_mealplan_day]" value="<?php echo esc_attr( $s['limit_mealplan_day'] ); ?>" class="small-text"></label>
-						<p class="description"><?php esc_html_e( 'Protects your API quota. 0 = no limit. Cached lookups never count.', 'ymove-nutrition' ); ?></p></td></tr>
+						<p class="description"><?php esc_html_e( 'Protects your API quota. 0 = no limit.', 'ymove-nutrition' ); ?></p></td></tr>
 			</table>
 
 			<h2><?php esc_html_e( 'Meal plan generator', 'ymove-nutrition' ); ?></h2>
@@ -268,7 +268,7 @@ class Admin {
 				<tr><th scope="row"><?php esc_html_e( 'Visitors', 'ymove-nutrition' ); ?></th>
 					<td><label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[mealplan_public]" value="1" <?php checked( $s['mealplan_public'] ); ?>> <?php esc_html_e( 'Let visitors who are not logged in generate meal plans (lead magnet). Members follow the tracker access rules above.', 'ymove-nutrition' ); ?></label>
 					<p><label><?php esc_html_e( 'Plans per visitor per day', 'ymove-nutrition' ); ?> <input type="number" min="1" name="<?php echo esc_attr( $name ); ?>[limit_mealplan_ip_day]" value="<?php echo esc_attr( $s['limit_mealplan_ip_day'] ); ?>" class="small-text"></label>
-					<span class="description"><?php esc_html_e( 'Per IP address. Identical requests are served from cache for 6 hours and do not count.', 'ymove-nutrition' ); ?></span></p></td></tr>
+					<span class="description"><?php esc_html_e( 'Per IP address. 0 = no limit.', 'ymove-nutrition' ); ?></span></p></td></tr>
 				<tr><th scope="row"><?php esc_html_e( 'Take the plan home', 'ymove-nutrition' ); ?></th>
 					<td><fieldset>
 					<?php
@@ -282,7 +282,7 @@ class Admin {
 						?>
 						<label><input type="radio" name="<?php echo esc_attr( $name ); ?>[mealplan_delivery]" value="<?php echo esc_attr( $key ); ?>" <?php checked( $s['mealplan_delivery'], $key ); ?>> <?php echo esc_html( $label ); ?></label><br>
 					<?php endforeach; ?>
-					<p class="description"><?php esc_html_e( 'Both include every recipe in full (photo, ingredients, method). Emailed plans use the results email settings below (consent, spam protection, call-to-action) and appear under Leads. The PDF opens a print view; visitors choose "Save as PDF".', 'ymove-nutrition' ); ?></p>
+					<p class="description"><?php esc_html_e( 'Both formats include every recipe in full (photo, ingredients, method). Emailed plans use the results email settings below (consent, spam protection, call-to-action) and appear under Leads. The PDF opens a print view; visitors choose "Save as PDF".', 'ymove-nutrition' ); ?></p>
 					</fieldset></td></tr>
 			</table>
 
@@ -299,11 +299,11 @@ class Admin {
 				<tr><th scope="row"><?php esc_html_e( 'Source links', 'ymove-nutrition' ); ?></th>
 					<td><label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[source_links]" value="1" <?php checked( $s['source_links'] ); ?>> <?php esc_html_e( 'Show the data source under the tracker, barcode, Nutrition Facts, meal plan and recipe blocks, with a link to Your Move. The calculators always link to their formula explanation.', 'ymove-nutrition' ); ?></label></td></tr>
 				<tr><th scope="row"><?php esc_html_e( 'Support Your Move', 'ymove-nutrition' ); ?></th>
-					<td><label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[credit_link]" value="1" <?php checked( $s['credit_link'] ); ?>> <?php esc_html_e( 'Show a small "Nutrition API by Your Move" credit under the blocks and in results emails. Optional - it helps keep the free calculator free.', 'ymove-nutrition' ); ?></label></td></tr>
+					<td><label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[credit_link]" value="1" <?php checked( $s['credit_link'] ); ?>> <?php esc_html_e( 'Show a small "Nutrition API by Your Move" (or "Recipe API by Your Move") credit under the blocks and a "Sent with Your Move Nutrition for WordPress" line in emails. Optional - it helps keep the free calculator free.', 'ymove-nutrition' ); ?></label></td></tr>
 			</table>
 
 			<h2><?php esc_html_e( 'Calculator leads', 'ymove-nutrition' ); ?></h2>
-			<p class="description"><?php esc_html_e( 'When a calculator block has email capture enabled, visitors who enter their email get their results by email and you get a lead. Choose "email required" on the block to gate the results behind the address.', 'ymove-nutrition' ); ?></p>
+			<p class="description"><?php esc_html_e( 'When a calculator block has email capture enabled, visitors who enter their email get their results by email and you get a lead. Choose "Required" in the block\'s email capture setting to gate the results behind the address.', 'ymove-nutrition' ); ?></p>
 			<table class="form-table" role="presentation">
 				<tr><th scope="row"><label for="ymove-lead-subject"><?php esc_html_e( 'Results email subject', 'ymove-nutrition' ); ?></label></th>
 					<td><input type="text" id="ymove-lead-subject" name="<?php echo esc_attr( $name ); ?>[lead_subject]" value="<?php echo esc_attr( $s['lead_subject'] ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'Your calorie results from {site}', 'ymove-nutrition' ); ?>">
@@ -332,7 +332,7 @@ class Admin {
 					<p class="description"><?php esc_html_e( 'Only loads on pages with an email form. Both providers add a script from Google or Cloudflare to those pages - mention it in your privacy policy.', 'ymove-nutrition' ); ?></p></td></tr>
 				<tr><th scope="row"><label for="ymove-lead-webhook"><?php esc_html_e( 'Webhook URL', 'ymove-nutrition' ); ?></label></th>
 					<td><input type="url" id="ymove-lead-webhook" name="<?php echo esc_attr( $name ); ?>[lead_webhook]" value="<?php echo esc_attr( $s['lead_webhook'] ); ?>" class="large-text" placeholder="https://hooks.zapier.com/hooks/catch/...">
-					<p class="description"><?php esc_html_e( 'Every lead is POSTed as JSON (email, consent, results, page). Works with Zapier, Make, n8n and any CRM that accepts a webhook - Mailchimp, ConvertKit, HubSpot, ActiveCampaign included.', 'ymove-nutrition' ); ?></p></td></tr>
+					<p class="description"><?php esc_html_e( 'Every lead is POSTed as JSON (email, consent, results, page). Point it at a Zapier, Make or n8n catch hook, or your own endpoint, to push leads into your CRM or mailing list.', 'ymove-nutrition' ); ?></p></td></tr>
 			</table>
 
 
@@ -426,7 +426,7 @@ class Admin {
 			<p class="description"><?php esc_html_e( 'Counted locally when a request actually reaches the API. Cached searches and barcodes are free and not counted.', 'ymove-nutrition' ); ?></p>
 			<div id="ymove-usage-chart" class="ymove-chart"></div>
 			<table class="widefat striped" id="ymove-usage-table"><thead><tr>
-				<th><?php esc_html_e( 'Day', 'ymove-nutrition' ); ?></th><th><?php esc_html_e( 'Search', 'ymove-nutrition' ); ?></th><th><?php esc_html_e( 'Barcode', 'ymove-nutrition' ); ?></th><th><?php esc_html_e( 'Food detail', 'ymove-nutrition' ); ?></th><th><?php esc_html_e( 'Photo', 'ymove-nutrition' ); ?></th><th><?php esc_html_e( 'Text', 'ymove-nutrition' ); ?></th>
+				<th><?php esc_html_e( 'Day', 'ymove-nutrition' ); ?></th><th><?php esc_html_e( 'Search', 'ymove-nutrition' ); ?></th><th><?php esc_html_e( 'Barcode', 'ymove-nutrition' ); ?></th><th><?php esc_html_e( 'Food detail', 'ymove-nutrition' ); ?></th><th><?php esc_html_e( 'Photo', 'ymove-nutrition' ); ?></th><th><?php esc_html_e( 'Text', 'ymove-nutrition' ); ?></th><th><?php esc_html_e( 'Meal plan', 'ymove-nutrition' ); ?></th><th><?php esc_html_e( 'Recipe', 'ymove-nutrition' ); ?></th>
 			</tr></thead><tbody></tbody></table>
 		</div>
 		<?php
@@ -434,12 +434,13 @@ class Admin {
 
 	private static function render_help(): void {
 		$rows = array(
-			array( __( 'Calorie Calculator', 'ymove-nutrition' ), '[ymove_calculator title="" layout="card" theme="" scheme="default" formula="mifflin" goal="maintain" units="" showmacros="1" showgoal="1" showbmi="0" hideunits="0" instant="0" leadmode="off" accentcolor="#2563eb"]', __( 'Free. layout: card | plain | split | steps | chat. theme: classic | ios | minimal | gradient | brutalist (empty = site default). palette (gradient): glacier | ocean | slate | aurora | mint | sunset. scheme (classic only): default | dark | soft | bold. formula: mifflin | harris | katch. leadmode: off | optional | required.', 'ymove-nutrition' ) ),
+			array( __( 'Calorie Calculator', 'ymove-nutrition' ), '[ymove_calculator title="" layout="card" theme="" scheme="default" formula="mifflin" goal="maintain" units="" showmacros="1" showgoal="1" showbmi="0" hideunits="0" instant="0" leadmode="off" accentcolor="#2563eb" palette="" chatdisplay="auto" chatheight="520" chatlabel=""]', __( 'Free. layout: card | plain | split | steps | chat. chatdisplay (chat only): auto | fixed | floating. theme: classic | ios | minimal | gradient | brutalist (empty = site default). palette (gradient): glacier | ocean | slate | aurora | mint | sunset. scheme (classic only): default | dark | soft | bold. formula: mifflin | harris | katch. leadmode: off | optional | required.', 'ymove-nutrition' ) ),
 			array( __( 'BMI Calculator', 'ymove-nutrition' ), '[ymove_bmi title="" layout="card" theme="" scheme="default" units="" hideunits="0" leadmode="off"]', __( 'Free. Adult BMI with WHO categories.', 'ymove-nutrition' ) ),
 			array( __( 'Nutrition Facts', 'ymove-nutrition' ), '[ymove_nutrition food="FOOD_ID" per="serving" schema="1"]', __( 'Needs a key. Pick the food in the block editor; the shortcode takes a food id from the search.', 'ymove-nutrition' ) ),
-			array( __( 'Calorie Tracker', 'ymove-nutrition' ), '[ymove_tracker showphoto="1" showbarcode="1" showweek="1"]', __( 'Needs a key and a logged-in member. Put it on a members-only page.', 'ymove-nutrition' ) ),
+			array( __( 'Calorie Tracker', 'ymove-nutrition' ), '[ymove_tracker showphoto="1" showtext="1" showbarcode="1" showweek="1"]', __( 'Needs a key and a logged-in member. Put it on a members-only page.', 'ymove-nutrition' ) ),
 			array( __( 'Barcode Lookup', 'ymove-nutrition' ), '[ymove_barcode]', __( 'Needs a key and a logged-in member. Scan a product and show its label.', 'ymove-nutrition' ) ),
 			array( __( 'Meal Plan Generator', 'ymove-nutrition' ), '[ymove_meal_plan diet="high_protein" days="3" meals="4" calories="2100"]', __( 'Needs a key. Members by default; open it to visitors under Settings. Meals can be added to the diary.', 'ymove-nutrition' ) ),
+			array( __( 'Recipes', 'ymove-nutrition' ), '[ymove_recipes recipe="" query="" mealtype="" diet="" maxcalories="0" perpage="9" showfilters="1"]', __( 'Needs a key. Set recipe to a recipe slug to embed one recipe with schema.org markup; leave it empty for a searchable browser. Visitors may browse unless you close it under Settings.', 'ymove-nutrition' ) ),
 		);
 		?>
 		<div class="ymove-card">
@@ -463,7 +464,9 @@ class Admin {
 			<ul>
 				<li><code>ymove_user_can_track( bool $allowed, int $user_id )</code> - <?php esc_html_e( 'decide who may use the tracker, e.g. tie it to a membership level.', 'ymove-nutrition' ); ?></li>
 				<li><code>ymove_show_source_links( bool $show )</code> - <?php esc_html_e( 'hide or show the source lines under the blocks.', 'ymove-nutrition' ); ?></li>
-				<li><code>ymove_calculator_lead( string $email, array $results, string $page )</code> - <?php esc_html_e( 'fires when a visitor emails themselves their results.', 'ymove-nutrition' ); ?></li>
+				<li><code>ymove_calculator_lead( string $email, array $results, string $page, bool $consent )</code> - <?php esc_html_e( 'fires after a calculator or meal plan lead is stored and emailed.', 'ymove-nutrition' ); ?></li>
+				<li><code>ymove_lead_email( array $message, array $results )</code> - <?php esc_html_e( 'change the structured results email before it is rendered.', 'ymove-nutrition' ); ?></li>
+				<li><code>ymove_email_html( string $html, array $message )</code> - <?php esc_html_e( 'change the HTML of any email the plugin sends.', 'ymove-nutrition' ); ?></li>
 				<li><code>define( 'YMOVE_API_KEY', '...' )</code> - <?php esc_html_e( 'set the key in wp-config.php instead of the database.', 'ymove-nutrition' ); ?></li>
 			</ul>
 			<p><a href="<?php echo esc_url( ymove_url( 'nutrition-api/wordpress-plugin/' ) ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Full documentation', 'ymove-nutrition' ); ?></a></p>
@@ -495,7 +498,7 @@ class Admin {
 					<td><?php echo esc_html( str_replace( '_', ' ', $r['goal'] ?? '' ) ); ?></td>
 					<td><?php echo esc_html( isset( $r['target'] ) ? num( $r['target'] ) : '' ); ?></td>
 					<td><?php echo esc_html( isset( $r['bmi'] ) ? num( $r['bmi'], 1 ) : '' ); ?></td>
-					<td><?php echo $l['consent'] ? '&#10003;' : '&ndash;'; ?></td>
+					<td><?php echo $l['consent'] ? esc_html__( 'yes', 'ymove-nutrition' ) : esc_html__( 'no', 'ymove-nutrition' ); ?></td>
 					<td><?php echo $l['page_url'] ? '<a href="' . esc_url( $l['page_url'] ) . '">' . esc_html( wp_parse_url( $l['page_url'], PHP_URL_PATH ) ?: '/' ) . '</a>' : ''; ?></td>
 					<td><a class="submitdelete" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=ymove_lead_delete&id=' . (int) $l['id'] ), 'ymove_lead_delete_' . (int) $l['id'] ) ); ?>"><?php esc_html_e( 'Delete', 'ymove-nutrition' ); ?></a></td>
 				</tr>

@@ -478,7 +478,7 @@ class Blocks {
 		$serving = (float) ( $food['servingSize'] ?? 100 );
 		$factor  = $per100 && $serving > 0 ? 100 / $serving : 1;
 		$val     = fn( $k ) => isset( $food[ $k ] ) && null !== $food[ $k ] ? (float) $food[ $k ] * $factor : null;
-		$title   = $a['title'] ?? ( $food['displayName'] ?? $food['shortName'] ?? $food['name'] ?? '' );
+		$title   = ( $a['title'] ?? '' ) ?: ( $food['displayName'] ?? $food['shortName'] ?? $food['name'] ?? '' );
 		$serving_label = $per100 ? '100 g' : ( ( $food['servingDescription'] ?? '' ) ?: num( $serving ) . ' g' );
 		$rows    = array(
 			array( __( 'Total Fat', 'ymove-nutrition' ), $val( 'fat' ), 'g', true ),
@@ -646,6 +646,9 @@ class Blocks {
 			if ( Access::user_can_track() ) {
 				self::enqueue( 'recipes' );
 			} else {
+				if ( ! wp_style_is( 'ymove-nutrition', 'registered' ) ) {
+					self::register_assets();
+				}
 				wp_enqueue_style( 'ymove-nutrition' );
 			}
 			return '<div class="ymn ymn-recipes ymn-recipes-single"' . $style . '>'

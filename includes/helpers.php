@@ -80,14 +80,6 @@ function source_link( string $kind ): string {
 				sprintf( '<a href="%s" target="_blank" rel="noopener">%s</a>', esc_url( $href ), esc_html__( 'Your Move Nutrition API', 'ymove-nutrition' ) )
 			);
 			break;
-		case 'analysis':
-			$href = ymove_url( 'nutrition-api/', array( 'utm_content' => 'analysis' ) );
-			$html = sprintf(
-				/* translators: %s: link to the Your Move Nutrition API */
-				esc_html__( 'Analyzed by %s', 'ymove-nutrition' ),
-				sprintf( '<a href="%s" target="_blank" rel="noopener">%s</a>', esc_url( $href ), esc_html__( 'Your Move Nutrition API', 'ymove-nutrition' ) )
-			);
-			break;
 		case 'mealplan':
 			$href = ymove_url( 'meal-plan-generator/', array( 'utm_content' => 'mealplan' ) );
 			$html = sprintf(
@@ -232,12 +224,8 @@ function frontend_config(): array {
 	return array(
 		'restUrl'   => esc_url_raw( rest_url( 'ymove/v1/' ) ),
 		'nonce'     => wp_create_nonce( 'wp_rest' ),
-		'loggedIn'  => is_user_logged_in(),
 		'canTrack'  => Access::user_can_track(),
-		'connected' => Api_Client::is_connected(),
-		'country'   => default_country(),
 		'units'     => default_units(),
-		'loginUrl'  => wp_login_url( get_permalink() ?: home_url() ),
 		'zxingUrl'  => YMOVE_NUTRITION_URL . 'assets/vendor/zxing-library.min.js',
 		'captcha'   => array(
 			'provider' => (string) Settings::get( 'captcha_provider', '' ),
@@ -262,11 +250,11 @@ function frontend_config(): array {
 			'remaining'      => __( 'remaining', 'ymove-nutrition' ),
 			'over'           => __( 'over', 'ymove-nutrition' ),
 			'today'          => __( 'Today', 'ymove-nutrition' ),
-			'analyzing'      => __( 'Analyzing your meal...', 'ymove-nutrition' ),
+			'analyzing'      => __( 'Analysing your meal...', 'ymove-nutrition' ),
 			'confidence'     => __( 'confidence', 'ymove-nutrition' ),
 			'noMatch'        => __( 'not matched to a food - not counted', 'ymove-nutrition' ),
 			'consentTitle'   => __( 'Send your photo for analysis?', 'ymove-nutrition' ),
-			'consentBody'    => __( 'Your photo is sent to the Your Move Nutrition API to identify the foods in it. It is analyzed and not stored by this website.', 'ymove-nutrition' ),
+			'consentBody'    => __( 'Your photo is sent to the Your Move Nutrition API to identify the foods in it. It is analysed and not stored by this website.', 'ymove-nutrition' ),
 			'consentAccept'  => __( 'I agree', 'ymove-nutrition' ),
 			'cancel'         => __( 'Cancel', 'ymove-nutrition' ),
 			'generating'     => __( 'Building your plan...', 'ymove-nutrition' ),
@@ -274,10 +262,7 @@ function frontend_config(): array {
 			'day'            => __( 'Day', 'ymove-nutrition' ),
 			'ingredients'    => __( 'Ingredients', 'ymove-nutrition' ),
 			'method'         => __( 'Method', 'ymove-nutrition' ),
-			'prep'           => __( 'prep', 'ymove-nutrition' ),
-			'cook'           => __( 'cook', 'ymove-nutrition' ),
 			'servings'       => __( 'servings', 'ymove-nutrition' ),
-			'loginToLog'     => __( 'Log in to add meals to your diary.', 'ymove-nutrition' ),
 			'noRecipes'      => __( 'No recipes match. Try fewer filters or another word.', 'ymove-nutrition' ),
 			'perServing'     => __( 'per serving', 'ymove-nutrition' ),
 			'adaptedFrom'    => __( 'Adapted from', 'ymove-nutrition' ),
@@ -302,7 +287,7 @@ function num( $value, int $decimals = 0 ): string {
 }
 
 /**
- * Client IP for public-route throttling (leads).
+ * Client IP for public-route throttling (leads, meal plans, recipes).
  */
 function client_ip(): string {
 	$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';

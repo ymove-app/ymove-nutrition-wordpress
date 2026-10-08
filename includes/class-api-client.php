@@ -158,7 +158,7 @@ class Api_Client {
 			'days'       => max( 1, min( 7, (int) ( $p['days'] ?? 1 ) ) ),
 			'macroSplit' => in_array( $p['macroSplit'] ?? '', self::SPLITS, true ) ? $p['macroSplit'] : 'balanced',
 		);
-		$cache_key = 'ymn_mp_' . md5( wp_json_encode( $params ) . ( empty( $p['fresh'] ) ? '' : wp_rand() ) );
+		$cache_key = 'ymn_mp_' . md5( wp_json_encode( $params ) );
 		if ( empty( $p['fresh'] ) ) {
 			$cached = get_transient( $cache_key );
 			if ( is_array( $cached ) ) {
@@ -170,7 +170,7 @@ class Api_Client {
 			return $res;
 		}
 		self::count( 'mealplan' );
-		set_transient( 'ymn_mp_' . md5( wp_json_encode( $params ) ), $res, 6 * HOUR_IN_SECONDS );
+		set_transient( $cache_key, $res, 6 * HOUR_IN_SECONDS );
 		return $res;
 	}
 
@@ -211,18 +211,6 @@ class Api_Client {
 		return $res;
 	}
 
-	/**
-	 * POST /mail/send - the Your Move mail relay. Takes structured fields;
-	 * the relay renders the email. Not used yet: the plugin sends through
-	 * wp_mail (see Mailer).
-	 */
-	public static function send_mail( array $payload ) {
-		$res = self::request( 'POST', '/mail/send', array(), $payload, 15 );
-		if ( ! is_wp_error( $res ) ) {
-			self::count( 'mail' );
-		}
-		return $res;
-	}
 
 	const DIETS  = array( 'balanced', 'high_protein', 'low_carb', 'keto', 'vegan', 'vegetarian', 'mediterranean', 'paleo' );
 	const SPLITS = array( 'balanced', 'high_protein', 'low_carb', 'high_fat' );
@@ -245,16 +233,6 @@ class Api_Client {
 		return $res;
 	}
 
-	/**
-	 * Plan name from the cached usage call, '' when unknown.
-	 */
-	public static function plan(): string {
-		$usage = self::usage();
-		if ( is_wp_error( $usage ) ) {
-			return '';
-		}
-		return (string) ( $usage['data']['plan'] ?? '' );
-	}
 
 	/* -------------------------------------------------------------- Transport */
 

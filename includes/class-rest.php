@@ -46,11 +46,6 @@ class REST {
 			'callback'            => array( __CLASS__, 'barcode' ),
 			'permission_callback' => $edit,
 		) );
-		register_rest_route( self::NS, '/foods/(?P<id>[A-Za-z0-9_\-]+)', array(
-			'methods'             => WP_REST_Server::READABLE,
-			'callback'            => array( __CLASS__, 'food' ),
-			'permission_callback' => $edit,
-		) );
 
 		// AI logging (Pro).
 		register_rest_route( self::NS, '/log/photo', array(
@@ -121,13 +116,13 @@ class REST {
 		) );
 
 		// Meal plan generator (members, or visitors when the owner opens it).
+		$plan_access = fn() => self::can_track() || (bool) Settings::get( 'mealplan_public', 0 );
 		register_rest_route( self::NS, '/mealplan', array(
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => array( __CLASS__, 'meal_plan' ),
-			'permission_callback' => fn() => self::can_track() || (bool) Settings::get( 'mealplan_public', 0 ),
+			'permission_callback' => $plan_access,
 		) );
 
-		$plan_access = fn() => self::can_track() || (bool) Settings::get( 'mealplan_public', 0 );
 		register_rest_route( self::NS, '/mealplan/swap', array(
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( __CLASS__, 'meal_plan_swap' ),
@@ -214,13 +209,6 @@ class REST {
 			return self::throttled();
 		}
 		return self::respond( Api_Client::barcode( $upc ) );
-	}
-
-	public static function food( WP_REST_Request $req ) {
-		if ( ! Api_Client::is_connected() ) {
-			return self::not_connected();
-		}
-		return self::respond( Api_Client::food( (string) $req['id'] ) );
 	}
 
 	/* ------------------------------------------------------------ AI logging */
@@ -566,7 +554,7 @@ class REST {
 	/* ---------------------------------------------------------------- Helpers */
 
 	private static function valid_day( string $day ): string {
-		if ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $day ) && strtotime( $day ) ) {
+		if ( preg_match( '/^(\d{4})-(\d{2})-(\d{2})$/', $day, $m ) && wp_checkdate( (int) $m[2], (int) $m[3], (int) $m[1], $day ) ) {
 			return $day;
 		}
 		return wp_date( 'Y-m-d' );

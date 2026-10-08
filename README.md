@@ -40,7 +40,7 @@ includes/
   class-leads.php       calculator lead capture, captcha, CSV export
   class-mailer.php      results / meal plan emails via wp_mail
   class-meal-plans.php  stored plans, meal swaps, plan emails
-  class-recipes.php     recipe shaping, licence attribution, schema.org Recipe
+  class-recipes.php     recipe shaping, license attribution, schema.org Recipe
   class-blocks.php      block + shortcode registration and PHP renderers
   class-admin.php       settings / usage / members / leads screens
   class-privacy.php     WP privacy exporter + eraser

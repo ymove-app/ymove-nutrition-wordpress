@@ -140,8 +140,8 @@ class Leads {
 		Mailer::send( array(
 			'to'       => $notify,
 			/* translators: %s: site name */
-			'subject'  => sprintf( __( '[%s] New calorie calculator lead', 'ymove-nutrition' ), $site ),
-			'heading'  => __( 'New calculator lead', 'ymove-nutrition' ),
+			'subject'  => sprintf( 'mealplan' === ( $results['type'] ?? '' ) ? __( '[%s] New meal plan lead', 'ymove-nutrition' ) : __( '[%s] New calorie calculator lead', 'ymove-nutrition' ), $site ),
+			'heading'  => 'mealplan' === ( $results['type'] ?? '' ) ? __( 'New meal plan lead', 'ymove-nutrition' ) : __( 'New calculator lead', 'ymove-nutrition' ),
 			'intro'    => '',
 			'rows'     => $rows,
 			'cta'      => array( __( 'View all leads', 'ymove-nutrition' ), admin_url( 'options-general.php?page=ymove-nutrition&tab=leads' ) ),

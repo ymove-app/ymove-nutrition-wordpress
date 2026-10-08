@@ -1,5 +1,6 @@
 /**
- * Calorie + BMI calculators. Pure client-side; no API involved.
+ * Calorie + BMI calculators. The maths runs in the browser; the only
+ * network calls are the optional lead email and "save as tracker target".
  *
  * BMR formulas: Mifflin-St Jeor (1990, default), revised Harris-Benedict
  * (Roza & Shizgal 1984), Katch-McArdle (needs body fat %). TDEE = BMR x
@@ -63,7 +64,8 @@
 	}
 
 	function wireUnits( root ) {
-		setUnits( root, store.get( 'units' ) || root.dataset.units || cfg.units || 'metric' );
+		// Only honour a remembered choice when this block shows the switch, or hideUnits would be overridden.
+		setUnits( root, ( root.querySelector( '.ymn-unit' ) && store.get( 'units' ) ) || root.dataset.units || cfg.units || 'metric' );
 		root.querySelectorAll( '.ymn-unit' ).forEach( ( b ) => b.addEventListener( 'click', () => setUnits( root, b.dataset.units ) ) );
 	}
 
@@ -166,7 +168,7 @@
 				li.classList.toggle( 'is-done', k < current );
 			} );
 			showError( form, '' );
-			steps[ current ].querySelector( 'input:not([hidden]), select' )?.focus( { preventScroll: true } );
+			steps[ current ].querySelector( 'label:not([hidden]) input, label:not([hidden]) select, select' )?.focus( { preventScroll: true } );
 		};
 		const REQUIRED = [ 'age', 'height_cm', 'weight_kg', 'weight_lb', 'height_ft', 'bodyfat' ];
 		const stepValid = () =>
@@ -225,6 +227,10 @@
 
 		// Fixed-height and floating chats scroll inside the log, never the page.
 		const boxed = root.classList.contains( 'ymn-chat-fixed' ) || root.classList.contains( 'ymn-chat-floating' );
+		// Never steal focus before the visitor has touched the widget (the in-page chat starts on load).
+		let engaged = false;
+		root.addEventListener( 'pointerdown', () => ( engaged = true ), { once: true } );
+		root.addEventListener( 'keydown', () => ( engaged = true ), { once: true } );
 		const scroll = () => ( boxed ? ( log.scrollTop = log.scrollHeight ) : composer.scrollIntoView( { behavior: 'smooth', block: 'nearest' } ) );
 		async function say( text ) {
 			const typing = el( 'div', 'ymn-chat-msg is-bot is-typing', el( 'span' ), el( 'span' ), el( 'span' ) );
@@ -260,7 +266,7 @@
 					} );
 					composer.append( chips );
 					scroll(); // A tall row of chips shrinks a boxed log; keep the question in view.
-					chips.querySelector( 'button' )?.focus( { preventScroll: true } );
+					if ( engaged ) chips.querySelector( 'button' )?.focus( { preventScroll: true } );
 					return;
 				}
 				const inputs = q.fields.map( ( fld ) => {
@@ -294,7 +300,7 @@
 				} );
 				composer.append( row );
 				scroll();
-				inputs[ 0 ].focus( { preventScroll: true } );
+				if ( engaged ) inputs[ 0 ].focus( { preventScroll: true } );
 			} );
 		}
 
@@ -360,6 +366,7 @@
 			return;
 		}
 		let started = false;
+		engaged = true; // Opening the floating chat is the interaction.
 		const launcher = float.querySelector( 'summary' );
 		float.addEventListener( 'toggle', () => {
 			if ( ! float.open ) return;
@@ -527,8 +534,10 @@
 					body: JSON.stringify( { kcal: last.target, protein: last.protein_g || 0, carbs: last.carbs_g || 0, fat: last.fat_g || 0 } ),
 				} );
 				btn.textContent = r.ok ? '✓ Saved as your target' : 'Could not save';
+				btn.disabled = r.ok;
 			} catch ( e ) {
 				btn.textContent = 'Could not save';
+				btn.disabled = false;
 			}
 		} );
 
