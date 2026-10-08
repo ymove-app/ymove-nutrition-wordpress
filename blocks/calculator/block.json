@@ -1,0 +1,105 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ymove/calculator",
+  "title": "Calorie Calculator",
+  "category": "widgets",
+  "icon": "calculator",
+  "description": "Free calorie, BMR and TDEE calculator with goal calories and macro split. Works without an API key.",
+  "keywords": [
+    "calorie",
+    "tdee",
+    "bmr",
+    "macro",
+    "nutrition",
+    "fitness",
+    "diet",
+    "lead"
+  ],
+  "textdomain": "ymove-nutrition",
+  "attributes": {
+    "title": {
+      "type": "string",
+      "default": ""
+    },
+    "units": {
+      "type": "string",
+      "default": ""
+    },
+    "goal": {
+      "type": "string",
+      "default": "maintain"
+    },
+    "formula": {
+      "type": "string",
+      "default": "mifflin"
+    },
+    "instant": {
+      "type": "boolean",
+      "default": false
+    },
+    "showMacros": {
+      "type": "boolean",
+      "default": true
+    },
+    "leadMode": {
+      "type": "string",
+      "default": "off"
+    },
+    "leadCapture": {
+      "type": "boolean",
+      "default": false
+    },
+    "accentColor": {
+      "type": "string",
+      "default": ""
+    },
+    "layout": {
+      "type": "string",
+      "default": "card"
+    },
+    "chatDisplay": {
+      "type": "string",
+      "default": "auto"
+    },
+    "chatHeight": {
+      "type": "number",
+      "default": 520
+    },
+    "chatLabel": {
+      "type": "string",
+      "default": ""
+    },
+    "theme": {
+      "type": "string",
+      "default": ""
+    },
+    "palette": {
+      "type": "string",
+      "default": ""
+    },
+    "scheme": {
+      "type": "string",
+      "default": "default"
+    },
+    "hideUnits": {
+      "type": "boolean",
+      "default": false
+    },
+    "showGoal": {
+      "type": "boolean",
+      "default": true
+    },
+    "showBmi": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": [
+      "wide"
+    ]
+  },
+  "editorScript": "file:./index.js"
+}

@@ -1,0 +1,71 @@
+.ymove-admin .ymove-card { background: #fff; border: 1px solid #c3c4c7; border-radius: 6px; padding: 1rem 1.25rem; margin: 1rem 0; max-width: 900px; }
+.ymove-admin .ymove-status { font-size: 1.05em; display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+.ymove-admin .ymove-status-ok .dashicons { color: #00a32a; }
+.ymove-admin .ymove-usage-summary { margin-top: 0.5rem; }
+.ymove-admin .ymove-badge { display: inline-block; background: #2271b1; color: #fff; border-radius: 999px; padding: 0.1rem 0.7rem; font-weight: 600; text-transform: uppercase; font-size: 0.8em; letter-spacing: 0.03em; }
+.ymove-admin .ymove-ok { color: #00752f; }
+.ymove-admin .ymove-warn { color: #996800; }
+.ymove-admin .ymove-inline { margin-left: 0.75rem; }
+.ymove-admin .ymove-roles { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; margin: 0.4rem 0 0 1.6rem; }
+.ymove-admin .ymove-limits label { display: inline-block; margin: 0 1.25rem 0.5rem 0; }
+.ymove-admin .ymove-chart { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 3px; height: 120px; align-items: end; margin: 1rem 0; border-bottom: 1px solid #c3c4c7; }
+.ymove-admin .ymove-chart-col { height: 100%; display: flex; align-items: flex-end; }
+.ymove-admin .ymove-chart-bar { width: 100%; background: #2271b1; min-height: 1px; border-radius: 2px 2px 0 0; }
+.ymove-admin .ymove-chart-bar.is-over { background: #d63638; }
+.ymove-admin .form-table code { font-size: 0.9em; }
+
+/* Calculator style picker */
+.ymove-admin .ymove-themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; max-width: 980px; margin: 0.75rem 0 1rem; padding: 0; border: 0; }
+.ymove-admin .ymove-theme { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 10px; background: #fff; border: 1px solid #c3c4c7; border-radius: 8px; cursor: pointer; }
+.ymove-admin .ymove-theme:has(input:checked) { border-color: #2271b1; box-shadow: 0 0 0 2px #2271b1; }
+.ymove-admin .ymove-theme:has(input:focus-visible) { outline: 2px solid #2271b1; outline-offset: 2px; }
+.ymove-admin .ymove-theme input { position: absolute; top: 14px; right: 14px; margin: 0; z-index: 1; }
+.ymove-admin .ymove-theme .description { font-size: 12px; line-height: 1.35; }
+.ymove-admin .ymove-theme-preview { display: flex; flex-direction: column; gap: 5px; height: 128px; padding: 10px; margin-bottom: 4px; overflow: hidden; box-sizing: border-box; background: #fff; border: 1px solid #e3e6ea; border-radius: 6px; font: 600 10px/1 -apple-system, system-ui, sans-serif; }
+.ymove-admin .ymove-tp-seg { display: flex; width: 60%; height: 12px; }
+.ymove-admin .ymove-tp-seg i { flex: 1; }
+.ymove-admin .ymove-tp-field { height: 13px; }
+.ymove-admin .ymove-tp-btn { display: flex; align-items: center; justify-content: center; height: 18px; }
+.ymove-admin .ymove-tp-big { display: flex; align-items: center; padding: 0 8px; height: 30px; font-size: 18px; }
+
+.ymove-admin .ymove-theme-classic .ymove-tp-seg { background: #f6f7f9; border-radius: 99px; padding: 2px; }
+.ymove-admin .ymove-theme-classic .ymove-tp-seg i:first-child { background: #fff; border-radius: 99px; box-shadow: 0 1px 2px rgba(0,0,0,.1); }
+.ymove-admin .ymove-theme-classic .ymove-tp-field { border: 1px solid #e3e6ea; border-radius: 4px; }
+.ymove-admin .ymove-theme-classic .ymove-tp-btn { background: #2563eb; color: #fff; border-radius: 99px; }
+.ymove-admin .ymove-theme-classic .ymove-tp-big { background: #2563eb; color: #fff; border-radius: 6px; }
+
+.ymove-admin .ymove-theme-ios .ymove-theme-preview { background: #fff; }
+.ymove-admin .ymove-theme-ios .ymove-tp-seg { width: 100%; background: #e3e3e8; border-radius: 4px; padding: 1px; }
+.ymove-admin .ymove-theme-ios .ymove-tp-seg i:first-child { background: #fff; border-radius: 3px; }
+.ymove-admin .ymove-theme-ios .ymove-tp-field { border: 1px solid #e5e5ea; border-radius: 5px; }
+.ymove-admin .ymove-theme-ios .ymove-tp-field + .ymove-tp-field { margin-top: -6px; border-top-left-radius: 0; border-top-right-radius: 0; }
+.ymove-admin .ymove-theme-ios .ymove-tp-btn { background: #007aff; color: #fff; border-radius: 5px; }
+.ymove-admin .ymove-theme-ios .ymove-tp-big { background: #007aff; color: #fff; border-radius: 7px; }
+
+.ymove-admin .ymove-theme-minimal .ymove-theme-preview { border: 1px solid #111; border-radius: 0; font-family: Helvetica, Arial, sans-serif; }
+.ymove-admin .ymove-theme-minimal .ymove-tp-seg { width: 40%; gap: 8px; }
+.ymove-admin .ymove-theme-minimal .ymove-tp-seg i { border-bottom: 2px solid #ccc; }
+.ymove-admin .ymove-theme-minimal .ymove-tp-seg i:first-child { border-color: #111; }
+.ymove-admin .ymove-theme-minimal .ymove-tp-field { border-bottom: 1px solid #111; }
+.ymove-admin .ymove-theme-minimal .ymove-tp-btn { background: #111; color: #fff; letter-spacing: .12em; text-transform: uppercase; font-weight: 500; }
+.ymove-admin .ymove-theme-minimal .ymove-tp-big { padding: 0; font-size: 26px; font-weight: 300; letter-spacing: -.05em; color: #111; }
+
+.ymove-admin .ymove-theme-gradient .ymove-theme-preview { border-color: #e9e3f5; border-radius: 12px; box-shadow: 0 10px 24px -14px rgba(37,99,235,.5); }
+.ymove-admin .ymove-theme-gradient .ymove-tp-seg { width: 55%; background: #eff6ff; border-radius: 99px; padding: 2px; }
+.ymove-admin .ymove-theme-gradient .ymove-tp-seg i:first-child { background: linear-gradient(90deg,#2563eb,#0891b2); border-radius: 99px; }
+.ymove-admin .ymove-theme-gradient .ymove-tp-field { border: 1px solid #e9e3f5; background: #faf8fe; border-radius: 99px; }
+.ymove-admin .ymove-theme-gradient .ymove-tp-btn { background: linear-gradient(90deg,#2563eb,#0891b2,#22d3ee); color: #fff; border-radius: 99px; }
+.ymove-admin .ymove-theme-gradient .ymove-tp-big { background: linear-gradient(135deg,#eff6ff,#ecfeff); border-radius: 10px; color: #1d4ed8; font-weight: 700; }
+
+.ymove-admin .ymove-theme-brutalist .ymove-theme-preview { border: 2px solid #111; border-radius: 0; box-shadow: 4px 4px 0 #111; margin-right: 4px; font-family: 'Space Grotesk', system-ui, sans-serif; }
+.ymove-admin .ymove-theme-brutalist .ymove-tp-seg { width: 50%; border: 2px solid #111; }
+.ymove-admin .ymove-theme-brutalist .ymove-tp-seg i:first-child { background: #c6ff3d; border-right: 2px solid #111; }
+.ymove-admin .ymove-theme-brutalist .ymove-tp-field { border: 2px solid #111; box-shadow: 2px 2px 0 #111; }
+.ymove-admin .ymove-theme-brutalist .ymove-tp-btn { background: #c6ff3d; border: 2px solid #111; box-shadow: 2px 2px 0 #111; font-weight: 700; text-transform: uppercase; }
+.ymove-admin .ymove-theme-brutalist .ymove-tp-big { background: #ff5c8a; border: 2px solid #111; font-weight: 900; }
+.ymove-admin .ymove-palettes { display: flex; flex-wrap: wrap; gap: 10px; padding: 0; border: 0; margin: 0; }
+.ymove-admin .ymove-palette { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; padding: 8px; border: 1px solid #c3c4c7; border-radius: 8px; background: #fff; cursor: pointer; }
+.ymove-admin .ymove-palette:has(input:checked) { border-color: #2271b1; box-shadow: 0 0 0 2px #2271b1; }
+.ymove-admin .ymove-palette input { position: absolute; opacity: 0; }
+.ymove-admin .ymove-palette:has(input:focus-visible) { outline: 2px solid #2271b1; outline-offset: 2px; }
+.ymove-admin .ymove-palette-swatch { display: block; width: 120px; height: 28px; border-radius: 99px; }

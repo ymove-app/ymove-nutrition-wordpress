@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ymove/meal-plan",
+  "title": "Meal Plan Generator",
+  "category": "widgets",
+  "icon": "carrot",
+  "description": "Generate a 1-7 day meal plan with recipes for a calorie target and diet. Needs a Your Move API key.",
+  "keywords": ["meal plan", "meal planner", "recipes", "diet", "nutrition"],
+  "textdomain": "ymove-nutrition",
+  "attributes": {
+    "diet": { "type": "string", "default": "balanced" },
+    "days": { "type": "number", "default": 1 },
+    "meals": { "type": "number", "default": 3 },
+    "calories": { "type": "number", "default": 0 },
+    "showRecipes": { "type": "boolean", "default": true },
+    "accentColor": { "type": "string", "default": "" }
+  },
+  "supports": { "html": false, "align": ["wide", "full"] },
+  "editorScript": "file:./index.js"
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ymove/recipes",
+  "title": "Recipes",
+  "category": "widgets",
+  "icon": "food",
+  "description": "Embed a recipe with full nutrition and recipe SEO markup, or let visitors search thousands of recipes by diet, meal and calories. Needs a Your Move API key.",
+  "keywords": ["recipe", "recipes", "recipe card", "nutrition", "meal", "diet"],
+  "textdomain": "ymove-nutrition",
+  "attributes": {
+    "recipe": { "type": "string", "default": "" },
+    "recipeTitle": { "type": "string", "default": "" },
+    "query": { "type": "string", "default": "" },
+    "mealType": { "type": "string", "default": "" },
+    "diet": { "type": "string", "default": "" },
+    "maxCalories": { "type": "number", "default": 0 },
+    "perPage": { "type": "number", "default": 9 },
+    "showFilters": { "type": "boolean", "default": true },
+    "accentColor": { "type": "string", "default": "" }
+  },
+  "supports": { "html": false, "align": ["wide", "full"] },
+  "editorScript": "file:./index.js"
+}

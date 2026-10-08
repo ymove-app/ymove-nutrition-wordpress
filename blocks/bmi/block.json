@@ -1,0 +1,59 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ymove/bmi",
+  "title": "BMI Calculator",
+  "category": "widgets",
+  "icon": "universal-access",
+  "description": "Body Mass Index calculator with WHO categories and healthy weight range. Works without an API key.",
+  "keywords": [
+    "bmi",
+    "body mass index",
+    "weight",
+    "health",
+    "fitness"
+  ],
+  "textdomain": "ymove-nutrition",
+  "attributes": {
+    "title": {
+      "type": "string",
+      "default": ""
+    },
+    "units": {
+      "type": "string",
+      "default": ""
+    },
+    "leadMode": {
+      "type": "string",
+      "default": "off"
+    },
+    "accentColor": {
+      "type": "string",
+      "default": ""
+    },
+    "layout": {
+      "type": "string",
+      "default": "card"
+    },
+    "theme": {
+      "type": "string",
+      "default": ""
+    },
+    "palette": {
+      "type": "string",
+      "default": ""
+    },
+    "scheme": {
+      "type": "string",
+      "default": "default"
+    },
+    "hideUnits": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "supports": {
+    "html": false
+  },
+  "editorScript": "file:./index.js"
+}

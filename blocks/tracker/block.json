@@ -1,0 +1,20 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ymove/tracker",
+  "title": "Calorie Tracker",
+  "category": "widgets",
+  "icon": "food",
+  "description": "Food diary for logged-in members: search, barcode scanner and AI photo logging. Needs a Your Move API key.",
+  "keywords": ["calorie tracker", "food diary", "barcode scanner", "macro tracker", "meal log"],
+  "textdomain": "ymove-nutrition",
+  "attributes": {
+    "showPhoto": { "type": "boolean", "default": true },
+    "showText": { "type": "boolean", "default": true },
+    "showBarcode": { "type": "boolean", "default": true },
+    "showWeek": { "type": "boolean", "default": true },
+    "accentColor": { "type": "string", "default": "" }
+  },
+  "supports": { "html": false, "align": ["wide", "full"] },
+  "editorScript": "file:./index.js"
+}

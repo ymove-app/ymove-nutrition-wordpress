@@ -1,0 +1,16 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ymove/barcode",
+  "title": "Barcode Lookup",
+  "category": "widgets",
+  "icon": "camera",
+  "description": "Scan a product barcode and show its nutrition label. Needs a Your Move API key and a logged-in member.",
+  "keywords": ["barcode", "scanner", "upc", "ean", "nutrition"],
+  "textdomain": "ymove-nutrition",
+  "attributes": {
+    "accentColor": { "type": "string", "default": "" }
+  },
+  "supports": { "html": false },
+  "editorScript": "file:./index.js"
+}
