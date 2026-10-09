@@ -141,7 +141,7 @@ class Blocks {
 		if ( 'auto' !== $chat ) {
 			$classes .= ' ymn-chat-' . $chat;
 			$height   = '--ymn-chat-h:' . max( 300, min( 900, (int) ( $a['chatHeight'] ?? 520 ) ) ) . 'px';
-			$style    = $style ? substr( $style, 0, -1 ) . ';' . $height . '"' : ' style="' . $height . '"';
+			$style    = ltrim( $style . ';' . $height, ';' );
 		}
 		$floating = 'floating' === $chat;
 		$launch   = trim( (string) ( $a['chatLabel'] ?? '' ) ) ?: __( 'How many calories do I need?', 'ymove-nutrition' );
@@ -207,21 +207,21 @@ class Blocks {
 
 		ob_start();
 		?>
-		<div class="<?php echo esc_attr( $classes ); ?>" data-units="<?php echo esc_attr( $units ); ?>" data-goal="<?php echo esc_attr( $goal_def ); ?>" data-lead="<?php echo esc_attr( $lead ); ?>" data-formula="<?php echo esc_attr( $formula ); ?>" data-instant="<?php echo $instant ? '1' : '0'; ?>" data-layout="<?php echo esc_attr( $layout ); ?>"<?php echo $style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+		<div class="<?php echo esc_attr( $classes ); ?>" data-units="<?php echo esc_attr( $units ); ?>" data-goal="<?php echo esc_attr( $goal_def ); ?>" data-lead="<?php echo esc_attr( $lead ); ?>" data-formula="<?php echo esc_attr( $formula ); ?>" data-instant="<?php echo $instant ? '1' : '0'; ?>" data-layout="<?php echo esc_attr( $layout ); ?>"<?php if ( $style ) : ?> style="<?php echo esc_attr( $style ); ?>"<?php endif; ?>>
 			<?php if ( $floating ) : ?>
 			<div class="ymn-chat-head"><strong><?php echo esc_html( $title ?: $launch ); ?></strong><button type="button" class="ymn-icon ymn-chat-close" aria-label="<?php esc_attr_e( 'Close', 'ymove-nutrition' ); ?>">&times;</button></div>
 			<?php elseif ( $title ) : ?><h3 class="ymn-title"><?php echo esc_html( $title ); ?></h3><?php endif; ?>
 			<div class="ymn-columns">
 			<form class="ymn-form" novalidate>
-				<?php echo $form_body; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<?php echo wp_kses( $form_body, allowed_html() ); ?>
 				<p class="ymn-error" role="alert" hidden></p>
 			</form>
 			<div class="ymn-result<?php echo 'required' === $lead ? ' is-gated' : ''; ?>"<?php echo 'split' === $layout ? '' : ' hidden'; ?> aria-live="polite">
-				<?php if ( 'split' === $layout ) : ?><?php echo self::empty_state( __( 'Your numbers show up here', 'ymove-nutrition' ), __( 'Fill in the form: daily calories, BMR, TDEE and a macro split appear here, tailored to your goal.', 'ymove-nutrition' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><?php endif; ?>
+				<?php if ( 'split' === $layout ) : ?><?php echo wp_kses( self::empty_state( __( 'Your numbers show up here', 'ymove-nutrition' ), __( 'Fill in the form: daily calories, BMR, TDEE and a macro split appear here, tailored to your goal.', 'ymove-nutrition' ) ), allowed_html() ); ?><?php endif; ?>
 				<?php if ( 'required' === $lead ) : ?>
 				<div class="ymn-gate">
 					<p class="ymn-gate-text"><?php esc_html_e( 'Your results are ready. Enter your email and we will show them here and send you a copy.', 'ymove-nutrition' ); ?></p>
-					<?php echo self::lead_form( true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<?php echo wp_kses( self::lead_form( true ), allowed_html() ); ?>
 				</div>
 				<?php endif; ?>
 				<div class="ymn-result-main">
@@ -245,18 +245,18 @@ class Blocks {
 				<button type="button" class="ymn-btn ymn-btn-secondary" data-action="save-target"><?php esc_html_e( 'Use as my tracker target', 'ymove-nutrition' ); ?></button>
 				<?php endif; ?>
 				<?php if ( 'optional' === $lead ) : ?>
-				<?php echo self::lead_form( false ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<?php echo wp_kses( self::lead_form( false ), allowed_html() ); ?>
 				<?php endif; ?>
-				<?php echo source_link( 'calculator' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<?php echo wp_kses( source_link( 'calculator' ), allowed_html() ); ?>
 			</div>
 			</div>
-			<?php echo credit_link(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<?php echo wp_kses( credit_link(), allowed_html() ); ?>
 		</div>
 		<?php
 		$html = (string) ob_get_clean();
 		if ( $floating ) {
 			// <details> opens and closes without JS; calculator.js starts the chat on first open.
-			$html = '<details class="ymn-chat-float ymn-chat-float-' . esc_attr( $theme ) . '"><summary class="ymn-chat-launcher"' . self::launcher_style( $theme, (string) ( $a['accentColor'] ?? '' ), (string) ( $a['palette'] ?? '' ) ) . '>'
+			$html = '<details class="ymn-chat-float ymn-chat-float-' . esc_attr( $theme ) . '"><summary class="ymn-chat-launcher" style="' . esc_attr( self::launcher_style( $theme, (string) ( $a['accentColor'] ?? '' ), (string) ( $a['palette'] ?? '' ) ) ) . '">'
 				. '<span class="ymn-chat-launcher-icon" aria-hidden="true">&#128172;</span><span>' . esc_html( $launch ) . '</span></summary>'
 				. $html . '</details>';
 		}
@@ -277,7 +277,7 @@ class Blocks {
 			case 'gradient':
 				$palettes = gradient_palettes();
 				$p        = $palettes[ $palette ] ?? $palettes[ (string) Settings::get( 'gradient_palette', 'glacier' ) ] ?? $palettes['glacier'];
-				return ' style="' . esc_attr( 'background:linear-gradient(90deg,' . $p[1] . ',' . $p[2] . ');color:#fff' ) . '"';
+				return 'background:linear-gradient(90deg,' . $p[1] . ',' . $p[2] . ');color:#fff';
 			case 'brutalist':
 				$bg = $color ?: '#c6ff3d';
 				break;
@@ -288,7 +288,7 @@ class Blocks {
 				$bg = $color ?: '#2563eb';
 		}
 		// Bold label: white stays readable (3:1) on brighter colours than body text would allow.
-		return ' style="' . esc_attr( 'background:' . $bg . ';color:' . ( luminance( $bg ) > 0.3 ? '#111111' : '#ffffff' ) ) . '"';
+		return 'background:' . $bg . ';color:' . ( luminance( $bg ) > 0.3 ? '#111111' : '#ffffff' );
 	}
 
 	public static function render_bmi( array $a ): string {
@@ -303,7 +303,7 @@ class Blocks {
 		$style  = self::accent_style( $theme, (string) ( $a['accentColor'] ?? '' ) );
 		ob_start();
 		?>
-		<div class="ymn ymn-bmi ymn-layout-<?php echo esc_attr( $layout . self::theme_classes( $theme, $scheme, (string) ( $a['palette'] ?? '' ) ) ); ?>" data-units="<?php echo esc_attr( $units ); ?>" data-lead="<?php echo esc_attr( $lead ); ?>" data-instant="<?php echo 'split' === $layout ? '1' : '0'; ?>"<?php echo $style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+		<div class="ymn ymn-bmi ymn-layout-<?php echo esc_attr( $layout . self::theme_classes( $theme, $scheme, (string) ( $a['palette'] ?? '' ) ) ); ?>" data-units="<?php echo esc_attr( $units ); ?>" data-lead="<?php echo esc_attr( $lead ); ?>" data-instant="<?php echo 'split' === $layout ? '1' : '0'; ?>"<?php if ( $style ) : ?> style="<?php echo esc_attr( $style ); ?>"<?php endif; ?>>
 			<?php if ( $title ) : ?><h3 class="ymn-title"><?php echo esc_html( $title ); ?></h3><?php endif; ?>
 			<div class="ymn-columns">
 			<form class="ymn-form" novalidate>
@@ -324,11 +324,11 @@ class Blocks {
 				<p class="ymn-error" role="alert" hidden></p>
 			</form>
 			<div class="ymn-result<?php echo 'required' === $lead ? ' is-gated' : ''; ?>"<?php echo 'split' === $layout ? '' : ' hidden'; ?> aria-live="polite">
-				<?php if ( 'split' === $layout ) : ?><?php echo self::empty_state( __( 'Your BMI shows up here', 'ymove-nutrition' ), __( 'Fill in your height and weight to see your BMI, WHO category and healthy weight range.', 'ymove-nutrition' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><?php endif; ?>
+				<?php if ( 'split' === $layout ) : ?><?php echo wp_kses( self::empty_state( __( 'Your BMI shows up here', 'ymove-nutrition' ), __( 'Fill in your height and weight to see your BMI, WHO category and healthy weight range.', 'ymove-nutrition' ) ), allowed_html() ); ?><?php endif; ?>
 				<?php if ( 'required' === $lead ) : ?>
 				<div class="ymn-gate">
 					<p class="ymn-gate-text"><?php esc_html_e( 'Your result is ready. Enter your email and we will show it here and send you a copy.', 'ymove-nutrition' ); ?></p>
-					<?php echo self::lead_form( true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<?php echo wp_kses( self::lead_form( true ), allowed_html() ); ?>
 				</div>
 				<?php endif; ?>
 				<div class="ymn-result-main">
@@ -339,12 +339,12 @@ class Blocks {
 				<div class="ymn-bmi-scale" aria-hidden="true"><span class="ymn-bmi-marker" data-out="marker"></span></div>
 				<p class="ymn-note"><?php esc_html_e( 'BMI is a screening measure for adults. It does not distinguish muscle from fat, so athletes and older adults should read it with care.', 'ymove-nutrition' ); ?></p>
 				<?php if ( 'optional' === $lead ) : ?>
-				<?php echo self::lead_form( false ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<?php echo wp_kses( self::lead_form( false ), allowed_html() ); ?>
 				<?php endif; ?>
-				<?php echo source_link( 'bmi' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<?php echo wp_kses( source_link( 'bmi' ), allowed_html() ); ?>
 			</div>
 			</div>
-			<?php echo credit_link(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<?php echo wp_kses( credit_link(), allowed_html() ); ?>
 		</div>
 		<?php
 		return (string) ob_get_clean();
@@ -370,7 +370,7 @@ class Blocks {
 	}
 
 	/**
-	 * Inline accent colour: the block's own, else the site-wide one. Classic
+	 * Inline accent colour (CSS custom properties): the block's own, else the site-wide one. Classic
 	 * and iOS use it as their accent, Neo-brutalist in place of the lime.
 	 * Minimal (monochrome) and Gradient (palettes) ignore it.
 	 */
@@ -387,7 +387,7 @@ class Blocks {
 		} else {
 			return '';
 		}
-		return ' style="' . esc_attr( $vars ) . '"';
+		return $vars;
 	}
 
 	/**
@@ -504,7 +504,7 @@ class Blocks {
 				<?php endforeach; ?>
 			</table>
 			<?php if ( ! empty( $food['brand'] ) ) : ?><div class="ymn-label-brand"><?php echo esc_html( $food['brand'] ); ?></div><?php endif; ?>
-			<?php echo source_link( 'data' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<?php echo wp_kses( source_link( 'data' ), allowed_html() ); ?>
 		</div>
 		<?php
 		$html = (string) ob_get_clean();
@@ -522,7 +522,7 @@ class Blocks {
 				'sugarContent'        => null === $val( 'sugar' ) ? null : num( $val( 'sugar' ), 1 ) . ' g',
 				'sodiumContent'       => null === $val( 'sodium' ) ? null : num( $val( 'sodium' ) ) . ' mg',
 			);
-			$html .= '<script type="application/ld+json">' . wp_json_encode( array_filter( $ld ) ) . '</script>';
+			$html .= '<script type="application/ld+json">' . wp_json_encode( array_filter( $ld ), JSON_HEX_TAG | JSON_HEX_AMP ) . '</script>';
 		}
 		return $html;
 	}
@@ -656,7 +656,7 @@ class Blocks {
 				. source_link( 'recipes' )
 				. credit_link( 'recipes' )
 				. '</div>'
-				. '<script type="application/ld+json">' . wp_json_encode( Recipes::json_ld( $r ) ) . '</script>';
+				. '<script type="application/ld+json">' . wp_json_encode( Recipes::json_ld( $r ), JSON_HEX_TAG | JSON_HEX_AMP ) . '</script>';
 		}
 
 		if ( ! Recipes::visitor_can_browse() ) {

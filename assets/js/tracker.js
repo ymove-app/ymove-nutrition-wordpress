@@ -62,7 +62,7 @@
 	}
 	const friendly = ( e ) => {
 		if ( e.status === 429 ) return t.throttled;
-		if ( e.code === 'ymn_plan' ) return t.upgrade;
+		if ( e.code === 'ymove_plan' ) return t.upgrade;
 		if ( e.status === 404 ) return t.notFound;
 		return e.message || t.error;
 	};
@@ -602,7 +602,7 @@
 		/* -------------------------------------------------------- utilities */
 		function consent() {
 			try {
-				if ( localStorage.getItem( 'ymn_photo_consent' ) === '1' ) return Promise.resolve( true );
+				if ( localStorage.getItem( 'ymove_photo_consent' ) === '1' ) return Promise.resolve( true );
 			} catch ( e ) {
 				/* ignore */
 			}
@@ -620,7 +620,7 @@
 							{ class: 'ymn-actions' },
 							h( 'button', { class: 'ymn-btn ymn-btn-primary', type: 'button', onClick: () => {
 								try {
-									localStorage.setItem( 'ymn_photo_consent', '1' );
+									localStorage.setItem( 'ymove_photo_consent', '1' );
 								} catch ( e ) {
 									/* ignore */
 								}

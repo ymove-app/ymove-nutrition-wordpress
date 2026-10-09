@@ -77,7 +77,7 @@
 		let calories = c.calories || 0;
 		if ( ! calories ) {
 			try {
-				const last = JSON.parse( localStorage.getItem( 'ymn_calc' ) );
+				const last = JSON.parse( localStorage.getItem( 'ymove_calc' ) );
 				if ( last && last.target ) calories = last.target;
 			} catch ( e ) {
 				/* ignore */

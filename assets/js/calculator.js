@@ -17,14 +17,14 @@
 	const store = {
 		get( k ) {
 			try {
-				return JSON.parse( localStorage.getItem( 'ymn_' + k ) );
+				return JSON.parse( localStorage.getItem( 'ymove_' + k ) );
 			} catch ( e ) {
 				return null;
 			}
 		},
 		set( k, v ) {
 			try {
-				localStorage.setItem( 'ymn_' + k, JSON.stringify( v ) );
+				localStorage.setItem( 'ymove_' + k, JSON.stringify( v ) );
 			} catch ( e ) {
 				/* private mode */
 			}

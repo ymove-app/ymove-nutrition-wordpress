@@ -71,7 +71,7 @@ class Access {
 		if ( $limit <= 0 ) {
 			return true; // 0 = unlimited.
 		}
-		$key   = 'ymn_' . $bucket . '_' . $user_id . '_' . floor( time() / $window );
+		$key   = 'ymove_' . $bucket . '_' . $user_id . '_' . floor( time() / $window );
 		$count = (int) get_transient( $key );
 		if ( $count >= $limit ) {
 			return false;
@@ -87,7 +87,7 @@ class Access {
 		if ( $limit <= 0 ) {
 			return true;
 		}
-		$key   = 'ymn_ip_' . $bucket . '_' . md5( client_ip() ) . '_' . floor( time() / $window );
+		$key   = 'ymove_ip_' . $bucket . '_' . md5( client_ip() ) . '_' . floor( time() / $window );
 		$count = (int) get_transient( $key );
 		if ( $count >= $limit ) {
 			return false;

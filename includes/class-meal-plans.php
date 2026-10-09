@@ -29,7 +29,7 @@ class Meal_Plans {
 
 	public static function store( array $plan ): string {
 		$token = wp_generate_password( 24, false );
-		set_transient( 'ymn_plan_' . $token, $plan, self::TTL );
+		set_transient( 'ymove_plan_' . $token, $plan, self::TTL );
 		return $token;
 	}
 
@@ -37,12 +37,12 @@ class Meal_Plans {
 		if ( ! preg_match( '/^[A-Za-z0-9]{24}$/', $token ) ) {
 			return null;
 		}
-		$plan = get_transient( 'ymn_plan_' . $token );
+		$plan = get_transient( 'ymove_plan_' . $token );
 		return is_array( $plan ) ? $plan : null;
 	}
 
 	private static function save( string $token, array $plan ): void {
-		set_transient( 'ymn_plan_' . $token, $plan, self::TTL );
+		set_transient( 'ymove_plan_' . $token, $plan, self::TTL );
 	}
 
 	/* ----------------------------------------------------------------- Swap */
@@ -56,7 +56,7 @@ class Meal_Plans {
 	public static function swap( string $token, int $day, int $index ) {
 		$plan = self::get( $token );
 		if ( ! $plan || ! isset( $plan['days'][ $day ]['meals'][ $index ] ) ) {
-			return new WP_Error( 'ymn_plan_gone', __( 'This meal plan has expired. Please generate a new one.', 'ymove-nutrition' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ymove_plan_gone', __( 'This meal plan has expired. Please generate a new one.', 'ymove-nutrition' ), array( 'status' => 404 ) );
 		}
 		$current = $plan['days'][ $day ]['meals'][ $index ];
 		$target  = max( 150, (float) ( $current['calories'] ?? 500 ) );
@@ -90,7 +90,7 @@ class Meal_Plans {
 			$candidates = array_values( array_filter( (array) ( $res['data'] ?? array() ), fn( $r ) => empty( $used[ (string) ( $r['id'] ?? '' ) ] ) ) );
 		}
 		if ( ! $candidates ) {
-			return new WP_Error( 'ymn_no_swap', __( 'No other recipe fits this meal. Try generating a new plan.', 'ymove-nutrition' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ymove_no_swap', __( 'No other recipe fits this meal. Try generating a new plan.', 'ymove-nutrition' ), array( 'status' => 404 ) );
 		}
 		// Prefer the closest few by calories, then pick one at random for variety.
 		usort( $candidates, fn( $a, $b ) => abs( (float) $a['calories'] - $target ) <=> abs( (float) $b['calories'] - $target ) );

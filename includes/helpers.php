@@ -43,6 +43,55 @@ function show_source_links(): bool {
 }
 
 /**
+ * Tags and attributes the plugin's own form and result markup uses, for
+ * escaping pre-built HTML at output with wp_kses().
+ */
+function allowed_html(): array {
+	$common = array(
+		'class'       => true,
+		'id'          => true,
+		'hidden'      => true,
+		'role'        => true,
+		'aria-label'  => true,
+		'aria-hidden' => true,
+		'aria-live'   => true,
+		'data-*'      => true,
+	);
+	$field = $common + array(
+		'type'         => true,
+		'name'         => true,
+		'value'        => true,
+		'min'          => true,
+		'max'          => true,
+		'step'         => true,
+		'inputmode'    => true,
+		'placeholder'  => true,
+		'required'     => true,
+		'selected'     => true,
+		'checked'      => true,
+		'autocomplete' => true,
+		'tabindex'     => true,
+	);
+	return array(
+		'div'      => $common,
+		'span'     => $common,
+		'p'        => $common,
+		'strong'   => $common,
+		'ol'       => $common,
+		'li'       => $common,
+		'label'    => $common + array( 'for' => true ),
+		'legend'   => $common,
+		'fieldset' => $common,
+		'form'     => $common + array( 'novalidate' => true ),
+		'input'    => $field,
+		'select'   => $field,
+		'option'   => $field,
+		'button'   => $field,
+		'a'        => array( 'href' => true, 'target' => true, 'rel' => true, 'class' => true ),
+	);
+}
+
+/**
  * Render a source / methodology line for a block.
  *
  * The calculator and BMI formula links always render, unbranded: anyone

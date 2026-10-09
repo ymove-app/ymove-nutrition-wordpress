@@ -43,7 +43,7 @@ class Api_Client {
 		if ( ! empty( $opts['usdaOnly'] ) ) {
 			$params['usdaOnly'] = 'true';
 		}
-		$cache_key = 'ymn_s_' . md5( wp_json_encode( $params ) );
+		$cache_key = 'ymove_s_' . md5( wp_json_encode( $params ) );
 		$cached    = get_transient( $cache_key );
 		if ( is_array( $cached ) ) {
 			return $cached;
@@ -66,7 +66,7 @@ class Api_Client {
 	public static function food( string $id ) {
 		$id = sanitize_text_field( $id );
 		if ( '' === $id ) {
-			return new WP_Error( 'ymn_bad_id', __( 'Missing food id.', 'ymove-nutrition' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ymove_bad_id', __( 'Missing food id.', 'ymove-nutrition' ), array( 'status' => 400 ) );
 		}
 		$cached = DB::cached_food( $id );
 		if ( $cached ) {
@@ -89,10 +89,10 @@ class Api_Client {
 	public static function barcode( string $upc, string $country = '' ) {
 		$upc = preg_replace( '/\D+/', '', $upc );
 		if ( strlen( $upc ) < 6 || strlen( $upc ) > 14 ) {
-			return new WP_Error( 'ymn_bad_upc', __( 'That does not look like a barcode.', 'ymove-nutrition' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ymove_bad_upc', __( 'That does not look like a barcode.', 'ymove-nutrition' ), array( 'status' => 400 ) );
 		}
 		$country   = $country ?: default_country();
-		$cache_key = 'ymn_b_' . $upc . '_' . $country;
+		$cache_key = 'ymove_b_' . $upc . '_' . $country;
 		$cached    = get_transient( $cache_key );
 		if ( is_array( $cached ) ) {
 			return $cached;
@@ -115,7 +115,7 @@ class Api_Client {
 
 	public static function barcode_known_missing( string $upc, string $country = '' ): bool {
 		$upc = preg_replace( '/\D+/', '', $upc );
-		return (bool) get_transient( 'ymn_b_' . $upc . '_' . ( $country ?: default_country() ) . '_404' );
+		return (bool) get_transient( 'ymove_b_' . $upc . '_' . ( $country ?: default_country() ) . '_404' );
 	}
 
 	/**
@@ -158,7 +158,7 @@ class Api_Client {
 			'days'       => max( 1, min( 7, (int) ( $p['days'] ?? 1 ) ) ),
 			'macroSplit' => in_array( $p['macroSplit'] ?? '', self::SPLITS, true ) ? $p['macroSplit'] : 'balanced',
 		);
-		$cache_key = 'ymn_mp_' . md5( wp_json_encode( $params ) );
+		$cache_key = 'ymove_mp_' . md5( wp_json_encode( $params ) );
 		if ( empty( $p['fresh'] ) ) {
 			$cached = get_transient( $cache_key );
 			if ( is_array( $cached ) ) {
@@ -178,7 +178,7 @@ class Api_Client {
 	 * GET /recipes/search - used to swap one meal in a plan. Cached a day.
 	 */
 	public static function recipe_search( array $params ) {
-		$cache_key = 'ymn_rs_' . md5( wp_json_encode( $params ) );
+		$cache_key = 'ymove_rs_' . md5( wp_json_encode( $params ) );
 		$cached    = get_transient( $cache_key );
 		if ( is_array( $cached ) ) {
 			return $cached;
@@ -197,7 +197,7 @@ class Api_Client {
 	 */
 	public static function recipe( string $id ) {
 		$id        = sanitize_text_field( $id );
-		$cache_key = 'ymn_r_' . md5( $id );
+		$cache_key = 'ymove_r_' . md5( $id );
 		$cached    = get_transient( $cache_key );
 		if ( is_array( $cached ) ) {
 			return $cached;
@@ -243,7 +243,7 @@ class Api_Client {
 	private static function request( string $method, string $path, array $query = array(), ?array $body = null, int $timeout = 20 ) {
 		$key = Settings::api_key();
 		if ( '' === $key ) {
-			return new WP_Error( 'ymn_no_key', __( 'No Your Move API key is configured.', 'ymove-nutrition' ), array( 'status' => 503 ) );
+			return new WP_Error( 'ymove_no_key', __( 'No Your Move API key is configured.', 'ymove-nutrition' ), array( 'status' => 503 ) );
 		}
 
 		$url = YMOVE_NUTRITION_API_BASE . $path;
@@ -267,7 +267,7 @@ class Api_Client {
 
 		$response = wp_remote_request( $url, $args );
 		if ( is_wp_error( $response ) ) {
-			return new WP_Error( 'ymn_transport', $response->get_error_message(), array( 'status' => 502 ) );
+			return new WP_Error( 'ymove_transport', $response->get_error_message(), array( 'status' => 502 ) );
 		}
 
 		$status = (int) wp_remote_retrieve_response_code( $response );
@@ -285,15 +285,15 @@ class Api_Client {
 		if ( ! empty( $json['upgradeUrl'] ) ) {
 			$data['upgradeUrl'] = $json['upgradeUrl'];
 		}
-		$code = 'ymn_upstream';
+		$code = 'ymove_upstream';
 		if ( 401 === $status ) {
-			$code = 'ymn_bad_key';
+			$code = 'ymove_bad_key';
 		} elseif ( 403 === $status ) {
-			$code = 'ymn_plan';
+			$code = 'ymove_plan';
 		} elseif ( 404 === $status ) {
-			$code = 'ymn_not_found';
+			$code = 'ymove_not_found';
 		} elseif ( 429 === $status ) {
-			$code = 'ymn_rate_limited';
+			$code = 'ymove_rate_limited';
 		}
 		return new WP_Error( $code, (string) $message, $data );
 	}

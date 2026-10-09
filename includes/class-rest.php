@@ -26,15 +26,11 @@ class REST {
 	}
 
 	public static function routes(): void {
-		$track = array( __CLASS__, 'can_track' );
-		$edit  = array( __CLASS__, 'can_track_or_edit' );
-		$admin = fn() => current_user_can( 'manage_options' );
-
 		// Food data (proxied).
 		register_rest_route( self::NS, '/foods/search', array(
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => array( __CLASS__, 'search' ),
-			'permission_callback' => $edit,
+			'permission_callback' => array( __CLASS__, 'can_track_or_edit' ),
 			'args'                => array(
 				'q'        => array( 'required' => true, 'sanitize_callback' => 'sanitize_text_field' ),
 				'page'     => array( 'default' => 1, 'sanitize_callback' => 'absint' ),
@@ -44,19 +40,19 @@ class REST {
 		register_rest_route( self::NS, '/foods/barcode/(?P<upc>[0-9]{6,14})', array(
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => array( __CLASS__, 'barcode' ),
-			'permission_callback' => $edit,
+			'permission_callback' => array( __CLASS__, 'can_track_or_edit' ),
 		) );
 
 		// AI logging (Pro).
 		register_rest_route( self::NS, '/log/photo', array(
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( __CLASS__, 'log_photo' ),
-			'permission_callback' => $track,
+			'permission_callback' => array( __CLASS__, 'can_track' ),
 		) );
 		register_rest_route( self::NS, '/log/text', array(
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( __CLASS__, 'log_text' ),
-			'permission_callback' => $track,
+			'permission_callback' => array( __CLASS__, 'can_track' ),
 			'args'                => array( 'text' => array( 'required' => true, 'sanitize_callback' => 'sanitize_textarea_field' ) ),
 		) );
 
@@ -65,86 +61,84 @@ class REST {
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( __CLASS__, 'diary_day' ),
-				'permission_callback' => $track,
+				'permission_callback' => array( __CLASS__, 'can_track' ),
 				'args'                => array( 'date' => array( 'sanitize_callback' => 'sanitize_text_field' ) ),
 			),
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( __CLASS__, 'diary_add' ),
-				'permission_callback' => $track,
+				'permission_callback' => array( __CLASS__, 'can_track' ),
 			),
 		) );
 		register_rest_route( self::NS, '/diary/(?P<id>\d+)', array(
 			array(
 				'methods'             => 'PATCH',
 				'callback'            => array( __CLASS__, 'diary_update' ),
-				'permission_callback' => $track,
+				'permission_callback' => array( __CLASS__, 'can_track' ),
 			),
 			array(
 				'methods'             => WP_REST_Server::DELETABLE,
 				'callback'            => array( __CLASS__, 'diary_delete' ),
-				'permission_callback' => $track,
+				'permission_callback' => array( __CLASS__, 'can_track' ),
 			),
 		) );
 		register_rest_route( self::NS, '/diary/week', array(
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => array( __CLASS__, 'diary_week' ),
-			'permission_callback' => $track,
+			'permission_callback' => array( __CLASS__, 'can_track' ),
 			'args'                => array( 'to' => array( 'sanitize_callback' => 'sanitize_text_field' ) ),
 		) );
 		register_rest_route( self::NS, '/diary/recent', array(
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => fn() => rest_ensure_response( array( 'data' => DB::recent_foods( get_current_user_id() ) ) ),
-			'permission_callback' => $track,
+			'permission_callback' => array( __CLASS__, 'can_track' ),
 		) );
 		register_rest_route( self::NS, '/diary/all', array(
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => fn() => rest_ensure_response( array( 'data' => DB::all_entries( get_current_user_id() ) ) ),
-			'permission_callback' => $track,
+			'permission_callback' => array( __CLASS__, 'can_track' ),
 		) );
 		register_rest_route( self::NS, '/targets', array(
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => fn() => rest_ensure_response( array( 'data' => DB::get_targets( get_current_user_id() ) ) ),
-				'permission_callback' => $track,
+				'permission_callback' => array( __CLASS__, 'can_track' ),
 			),
 			array(
 				'methods'             => 'PUT',
 				'callback'            => array( __CLASS__, 'targets_set' ),
-				'permission_callback' => $track,
+				'permission_callback' => array( __CLASS__, 'can_track' ),
 			),
 		) );
 
 		// Meal plan generator (members, or visitors when the owner opens it).
-		$plan_access = fn() => self::can_track() || (bool) Settings::get( 'mealplan_public', 0 );
 		register_rest_route( self::NS, '/mealplan', array(
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => array( __CLASS__, 'meal_plan' ),
-			'permission_callback' => $plan_access,
+			'permission_callback' => array( __CLASS__, 'can_plan' ),
 		) );
 
 		register_rest_route( self::NS, '/mealplan/swap', array(
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( __CLASS__, 'meal_plan_swap' ),
-			'permission_callback' => $plan_access,
+			'permission_callback' => array( __CLASS__, 'can_plan' ),
 		) );
 		register_rest_route( self::NS, '/mealplan/email', array(
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( __CLASS__, 'meal_plan_email' ),
-			'permission_callback' => fn() => $plan_access() && in_array( Meal_Plans::delivery(), array( 'email', 'both' ), true ),
+			'permission_callback' => array( __CLASS__, 'can_email_plan' ),
 		) );
 
 		// Recipes (visitors too, unless the owner closed it; editors for the block picker).
-		$recipes = fn() => Recipes::visitor_can_browse() || current_user_can( 'edit_posts' );
 		register_rest_route( self::NS, '/recipes', array(
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => array( __CLASS__, 'recipes' ),
-			'permission_callback' => $recipes,
+			'permission_callback' => array( __CLASS__, 'can_browse_recipes' ),
 		) );
 		register_rest_route( self::NS, '/recipes/(?P<slug>[A-Za-z0-9_\-]+)', array(
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => array( __CLASS__, 'recipe' ),
-			'permission_callback' => $recipes,
+			'permission_callback' => array( __CLASS__, 'can_browse_recipes' ),
 		) );
 
 		// Calculator lead capture (public).
@@ -158,12 +152,12 @@ class REST {
 		register_rest_route( self::NS, '/admin/usage', array(
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => array( __CLASS__, 'admin_usage' ),
-			'permission_callback' => $admin,
+			'permission_callback' => array( __CLASS__, 'can_manage' ),
 		) );
 		register_rest_route( self::NS, '/admin/member/(?P<id>\d+)', array(
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => array( __CLASS__, 'admin_member' ),
-			'permission_callback' => fn() => current_user_can( 'ymove_view_member_logs' ) || current_user_can( 'manage_options' ),
+			'permission_callback' => array( __CLASS__, 'can_view_member' ),
 		) );
 	}
 
@@ -179,6 +173,32 @@ class REST {
 	 */
 	public static function can_track_or_edit(): bool {
 		return self::can_track() || current_user_can( 'edit_posts' );
+	}
+
+	public static function can_manage(): bool {
+		return current_user_can( 'manage_options' );
+	}
+
+	/**
+	 * Meal plans: members, or visitors when the owner made the generator public.
+	 */
+	public static function can_plan(): bool {
+		return self::can_track() || (bool) Settings::get( 'mealplan_public', 0 );
+	}
+
+	public static function can_email_plan(): bool {
+		return self::can_plan() && in_array( Meal_Plans::delivery(), array( 'email', 'both' ), true );
+	}
+
+	/**
+	 * Recipes: visitors unless the owner closed it; editors for the block picker.
+	 */
+	public static function can_browse_recipes(): bool {
+		return Recipes::visitor_can_browse() || current_user_can( 'edit_posts' );
+	}
+
+	public static function can_view_member(): bool {
+		return current_user_can( 'ymove_view_member_logs' ) || current_user_can( 'manage_options' );
 	}
 
 	/* ----------------------------------------------------------- Food proxy */
@@ -203,7 +223,7 @@ class REST {
 		}
 		$upc = (string) $req['upc'];
 		if ( Api_Client::barcode_known_missing( $upc ) ) {
-			return new WP_Error( 'ymn_not_found', __( 'Product not found.', 'ymove-nutrition' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ymove_not_found', __( 'Product not found.', 'ymove-nutrition' ), array( 'status' => 404 ) );
 		}
 		if ( ! Access::consume( 'barcode' ) ) {
 			return self::throttled();
@@ -228,7 +248,7 @@ class REST {
 			$image = preg_replace( '#^data:image/[a-z]+;base64,#i', '', $image );
 		}
 		if ( strlen( $image ) < 100 || strlen( $image ) > 2.8 * 1024 * 1024 ) {
-			return new WP_Error( 'ymn_bad_image', __( 'Image missing or too large (max 2 MB).', 'ymove-nutrition' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ymove_bad_image', __( 'Image missing or too large (max 2 MB).', 'ymove-nutrition' ), array( 'status' => 400 ) );
 		}
 		if ( ! Access::consume( 'photo' ) ) {
 			return self::throttled();
@@ -242,7 +262,7 @@ class REST {
 		}
 		$text = trim( (string) $req['text'] );
 		if ( strlen( $text ) < 3 ) {
-			return new WP_Error( 'ymn_bad_text', __( 'Describe the meal in a few words.', 'ymove-nutrition' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ymove_bad_text', __( 'Describe the meal in a few words.', 'ymove-nutrition' ), array( 'status' => 400 ) );
 		}
 		if ( ! Access::consume( 'text' ) ) {
 			return self::throttled();
@@ -295,7 +315,7 @@ class REST {
 		}
 		$name = ( $per['displayName'] ?? '' ) ?: ( ( $per['shortName'] ?? '' ) ?: ( $per['name'] ?? '' ) );
 		if ( '' === trim( (string) $name ) ) {
-			return new WP_Error( 'ymn_bad_entry', __( 'Missing food name.', 'ymove-nutrition' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ymove_bad_entry', __( 'Missing food name.', 'ymove-nutrition' ), array( 'status' => 400 ) );
 		}
 
 		// Manual gram override: scale by grams / servingSize instead of quantity.
@@ -331,7 +351,7 @@ class REST {
 		$id      = (int) $req['id'];
 		$current = DB::get_entry( $user_id, $id );
 		if ( ! $current ) {
-			return new WP_Error( 'ymn_not_found', __( 'Entry not found.', 'ymove-nutrition' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ymove_not_found', __( 'Entry not found.', 'ymove-nutrition' ), array( 'status' => 404 ) );
 		}
 		$b      = $req->get_json_params();
 		$fields = array();
@@ -469,18 +489,18 @@ class REST {
 		}
 		$email = sanitize_email( (string) ( $b['email'] ?? '' ) );
 		if ( ! is_email( $email ) ) {
-			return new WP_Error( 'ymn_bad_email', __( 'Please enter a valid email address.', 'ymove-nutrition' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ymove_bad_email', __( 'Please enter a valid email address.', 'ymove-nutrition' ), array( 'status' => 400 ) );
 		}
 		if ( ! Leads::verify_captcha( (string) ( $b['captcha'] ?? '' ) ) ) {
-			return new WP_Error( 'ymn_captcha', __( 'Spam check failed. Please reload the page and try again.', 'ymove-nutrition' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ymove_captcha', __( 'Spam check failed. Please reload the page and try again.', 'ymove-nutrition' ), array( 'status' => 400 ) );
 		}
 		$consent = ! empty( $b['consent'] );
 		if ( Settings::get( 'lead_consent_text' ) && ! $consent ) {
-			return new WP_Error( 'ymn_consent', __( 'Please tick the consent box.', 'ymove-nutrition' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ymove_consent', __( 'Please tick the consent box.', 'ymove-nutrition' ), array( 'status' => 400 ) );
 		}
 		$plan = Meal_Plans::get( (string) ( $b['token'] ?? '' ) );
 		if ( ! $plan ) {
-			return new WP_Error( 'ymn_plan_gone', __( 'This meal plan has expired. Please generate a new one.', 'ymove-nutrition' ), array( 'status' => 404 ) );
+			return new WP_Error( 'ymove_plan_gone', __( 'This meal plan has expired. Please generate a new one.', 'ymove-nutrition' ), array( 'status' => 404 ) );
 		}
 		$site    = wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES );
 		$message = Meal_Plans::message( $plan );
@@ -510,14 +530,14 @@ class REST {
 		}
 		$email = sanitize_email( (string) ( $b['email'] ?? '' ) );
 		if ( ! is_email( $email ) ) {
-			return new WP_Error( 'ymn_bad_email', __( 'Please enter a valid email address.', 'ymove-nutrition' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ymove_bad_email', __( 'Please enter a valid email address.', 'ymove-nutrition' ), array( 'status' => 400 ) );
 		}
 		if ( ! Leads::verify_captcha( (string) ( $b['captcha'] ?? '' ) ) ) {
-			return new WP_Error( 'ymn_captcha', __( 'Spam check failed. Please reload the page and try again.', 'ymove-nutrition' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ymove_captcha', __( 'Spam check failed. Please reload the page and try again.', 'ymove-nutrition' ), array( 'status' => 400 ) );
 		}
 		$consent = ! empty( $b['consent'] );
 		if ( Settings::get( 'lead_consent_text' ) && ! $consent ) {
-			return new WP_Error( 'ymn_consent', __( 'Please tick the consent box.', 'ymove-nutrition' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ymove_consent', __( 'Please tick the consent box.', 'ymove-nutrition' ), array( 'status' => 400 ) );
 		}
 		$results = is_array( $b['results'] ?? null ) ? array_map( 'sanitize_text_field', array_map( 'strval', array_filter( $b['results'], 'is_scalar' ) ) ) : array();
 		$page    = esc_url_raw( (string) ( $b['page'] ?? '' ) );
@@ -599,10 +619,10 @@ class REST {
 	}
 
 	private static function not_connected() {
-		return new WP_Error( 'ymn_not_connected', __( 'This site has not connected a Your Move API key yet.', 'ymove-nutrition' ), array( 'status' => 503 ) );
+		return new WP_Error( 'ymove_not_connected', __( 'This site has not connected a Your Move API key yet.', 'ymove-nutrition' ), array( 'status' => 503 ) );
 	}
 
 	private static function throttled() {
-		return new WP_Error( 'ymn_throttled', __( 'Too many requests. Please wait a bit.', 'ymove-nutrition' ), array( 'status' => 429 ) );
+		return new WP_Error( 'ymove_throttled', __( 'Too many requests. Please wait a bit.', 'ymove-nutrition' ), array( 'status' => 429 ) );
 	}
 }

@@ -28,4 +28,4 @@ $ymove_nutrition_role = get_role( 'administrator' );
 if ( $ymove_nutrition_role ) {
 	$ymove_nutrition_role->remove_cap( 'ymove_view_member_logs' );
 }
-$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_ymn_%' OR option_name LIKE '_transient_timeout_ymn_%' OR option_name LIKE '_transient_ymove_nutrition_%' OR option_name LIKE '_transient_timeout_ymove_nutrition_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s", $wpdb->esc_like( '_transient_ymove_' ) . '%', $wpdb->esc_like( '_transient_timeout_ymove_' ) . '%' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
